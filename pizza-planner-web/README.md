@@ -1,12 +1,49 @@
-# React + Vite
+# 🍕 Neapolitan Pizza Calculator Planner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight and interactive web app to calculate pizza dough ingredients and plan your fermentation schedule — based on the official 2024 AVPN guidelines.
 
-Currently, two official plugins are available:
+Built with **React + Vite**, this app helps you determine:
+- Flour, water, salt, and yeast quantities
+- Fermentation time until your chosen cook time
+- Step-by-step preparation timeline
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌐 Live Demo
 
-## Expanding the ESLint configuration
+> Coming soon… (You can deploy to [Vercel](https://vercel.com/) or [Netlify](https://netlify.com/) easily!)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📸 Screenshots
+
+_
+
+## 🚀 Getting Started
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/bahadirbulut/Neopolitan_Pizza_Calculator_Planner.git
+cd Neopolitan_Pizza_Calculator_Planner
+```
+
+### 2. Install dependencies
+```bash
+cd pizza-planner-web
+npm install
+```
+
+### 3. Run the development server
+```bash
+npm run dev
+```
+
+Open http://localhost:5173 to view it in the browser.
+
+## 🧱 Tech Stack
+React 18
+Vite
+CSS Modules
+
+## 📄 License
+MIT
+
+
+Made with ❤️ and 🍕 by Bahadir Bulut
