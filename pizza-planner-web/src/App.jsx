@@ -1,5 +1,21 @@
 import { useState } from 'react';
 import './App.css';
+import {
+  Timeline,
+  TimelineItem,
+  TimelineSeparator,
+  TimelineConnector,
+  TimelineContent,
+  TimelineDot,
+  TimelineOppositeContent
+} from '@mui/lab';
+import { Typography } from '@mui/material';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import HotelIcon from '@mui/icons-material/Hotel';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import CircleIcon from '@mui/icons-material/Circle';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import { motion } from 'framer-motion';
 
 function App() {
   const [pizzaCount, setPizzaCount] = useState(4);
@@ -76,6 +92,14 @@ function App() {
     });
   };
 
+  const getYeastColor = (type) => {
+    switch (type) {
+      case 'sourdough': return '#8e44ad';
+      case 'fresh': return '#f39c12';
+      default: return '#3498db'; // dry
+    }
+  };
+
   return (
     <div className="container">
       <div className="app-header">
@@ -112,70 +136,142 @@ function App() {
       </div>
 
       {result && (
-        <>
-          <div className="result-section">
-            <h3>📦 Dough Recipe</h3>
-            <table className="recipe-table">
-              <tbody>
-                <tr><td>Flour</td><td>{result.flour.toFixed(1)} g</td><td>(100%)</td></tr>
-                <tr><td>Water</td><td>{result.water.toFixed(1)} g</td><td>({result.waterPct.toFixed(1)}%)</td></tr>
-                <tr><td>Salt</td><td>{result.salt.toFixed(1)} g</td><td>({result.saltPct.toFixed(2)}%)</td></tr>
-                <tr>
-                  <td>{result.yeastType === 'sourdough' ? 'Sourdough Starter' : 'Yeast'}</td>
-                  <td>{result.yeast.toFixed(2)} g</td>
-                  <td>({result.yeastPct.toFixed(3)}%)</td>
-                </tr>
-              </tbody>
-            </table>
-            <p style={{ marginTop: '1.5rem' }}><strong>Fermentation Time:</strong> ~{result.hoursUntilBake.toFixed(1)} hours</p>
-          </div>
-
-          <div className="result-section">
+        <><div className="result-section recipe">
+          <h3>📦 Dough Recipe</h3>
+          <table className="recipe-table">
+            <tbody>
+              <tr><td>Flour</td><td>{result.flour.toFixed(1)} g</td><td>(100%)</td></tr>
+              <tr><td>Water</td><td>{result.water.toFixed(1)} g</td><td>({result.waterPct.toFixed(1)}%)</td></tr>
+              <tr><td>Salt</td><td>{result.salt.toFixed(1)} g</td><td>({result.saltPct.toFixed(2)}%)</td></tr>
+              <tr>
+                <td>{result.yeastType === 'sourdough' ? 'Sourdough Starter' : 'Yeast'}</td>
+                <td>{result.yeast.toFixed(2)} g</td>
+                <td>({result.yeastPct.toFixed(3)}%)</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style={{ marginTop: '1.5rem' }}>
+            <strong>Fermentation Time:</strong> ~{result.hoursUntilBake.toFixed(1)} hours
+          </p>
+        </div><div className="result-section timeline">
             <h3>🧭 Example Timeline</h3>
-            <ul className="timeline">
-                <li>
-                  <strong>🕒 Mix:</strong><br />
-                  <span>{formatDate(result.mixTime)}</span>
-                </li>
-                <li>
-                  <strong>🛌 Rest (20 min):</strong><br />
-                  <span>Until {formatDate(result.restTime)}</span>
-                </li>
-                <li>
-                  <strong>📦 Bulk Fermentation ({result.hoursUntilBake > 16 ? 'Cold Ferment' : 'Room Temp'})</strong><br />
-                  <span>
-                    Duration: {Math.floor((result.bulkEnd - result.bulkStart) / 3600000)}h {Math.round(((result.bulkEnd - result.bulkStart) % 3600000) / 60000)}m<br />
-                    {formatDate(result.bulkStart)} → {formatDate(result.bulkEnd)}
-                  </span>
-                </li>
-                <li>
-                  <strong>🍥 Balling:</strong><br />
-                  <span>{formatDate(result.ballTime)}</span>
-                </li>
-                <li>
-                  <strong>🔥 Ready to bake:</strong><br />
-                  <span>{formatDate(result.bakeTime)}</span>
-                </li>
-            </ul>
+            <Timeline position="alternate">
+              <TimelineItem sx={{ mb: 3 }}>
+                <TimelineOppositeContent color="textSecondary">
+                  {formatDate(result.mixTime)}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineDot color="primary"><AccessTimeIcon /></TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent>
+                  <motion.div
+                    initial={{ opacity: 0, translateY: 30 }}
+                    whileInView={{ opacity: 1, translateY: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                  >
+                    <Typography variant="h6">Mix</Typography>
+                    <Typography>Start combining your ingredients.</Typography>
+                  </motion.div>
+                </TimelineContent>
+              </TimelineItem>
 
-            {result.hoursUntilBake > 24 && (
-              <p className="warning">
-                ⚠️ Your fermentation exceeds 24 hours. Make sure you're cold fermenting the dough in a fridge (~4°C) and bring it to room temperature at least 1–2 hours before balling.
-              </p>
-            )}
-            {result.yeastType === 'sourdough' && result.hoursUntilBake < 18 && (
-              <p className="warning">
-                ⚠️ AVPN recommends longer fermentation (20–24h) when using sourdough starter. Consider adjusting your target bake time.
-              </p>
-            )}
-          </div>
+              <TimelineItem sx={{ mb: 3 }}>
+                <TimelineOppositeContent color="textSecondary">
+                  Until {formatDate(result.restTime)}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineDot color="secondary"><HotelIcon /></TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent>
+                  <motion.div
+                    initial={{ opacity: 0, translateY: 30 }}
+                    whileInView={{ opacity: 1, translateY: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                  >
+                    <Typography variant="h6">Rest</Typography>
+                    <Typography>Let the dough relax 20 min.</Typography>
+                  </motion.div>
+                </TimelineContent>
+              </TimelineItem>
 
-          <div className="result-section">
+              <TimelineItem sx={{ mb: 3 }}>
+                <TimelineOppositeContent color="textSecondary">
+                  {formatDate(result.bulkStart)} → {formatDate(result.bulkEnd)}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineDot sx={{ backgroundColor: getYeastColor(yeastType) }}>
+                    <InventoryIcon sx={{ color: '#fff' }} />
+                  </TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent>
+                  <motion.div
+                    initial={{ opacity: 0, translateY: 30 }}
+                    whileInView={{ opacity: 1, translateY: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                  >
+                    <Typography variant="h6">Bulk Fermentation</Typography>
+                    <Typography>
+                      {result.hoursUntilBake > 16 ? 'Cold ferment' : 'Room temp'} for{' '}
+                      {Math.floor((result.bulkEnd - result.bulkStart) / 3600000)}h{' '}
+                      {Math.round(((result.bulkEnd - result.bulkStart) % 3600000) / 60000)}m
+                    </Typography>
+                  </motion.div>
+                </TimelineContent>
+              </TimelineItem>
+
+              <TimelineItem sx={{ mb: 3 }}>
+                <TimelineOppositeContent color="textSecondary">
+                  {formatDate(result.ballTime)}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineDot color="success"><CircleIcon /></TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent>
+                  <motion.div
+                    initial={{ opacity: 0, translateY: 30 }}
+                    whileInView={{ opacity: 1, translateY: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                  >
+                    <Typography variant="h6">Balling</Typography>
+                    <Typography>Shape dough balls 2h before bake.</Typography>
+                  </motion.div>
+                </TimelineContent>
+              </TimelineItem>
+
+              <TimelineItem sx={{ mb: 3 }}>
+                <TimelineOppositeContent color="textSecondary">
+                  {formatDate(result.bakeTime)}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineDot color="error"><LocalFireDepartmentIcon /></TimelineDot>
+                </TimelineSeparator>
+                <TimelineContent>
+                  <motion.div
+                    initial={{ opacity: 0, translateY: 30 }}
+                    whileInView={{ opacity: 1, translateY: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                  >
+                    <Typography variant="h6">Ready to Bake</Typography>
+                    <Typography>Fire up your oven and enjoy 🍕</Typography>
+                  </motion.div>
+                </TimelineContent>
+              </TimelineItem>
+            </Timeline>
+          </div><div className="result-section guidelines">
             <h3>📜 AVPN Official Fermentation Recommendations</h3>
             <ul className="avpn-guidelines">
               <li>🕒 Total fermentation: minimum 8 hours, ideally 16–24 hours</li>
               <li>🌡️ Dough temperature: ~22–25°C during room-temp fermentation</li>
-              <li>❄️ Cold fermentation (if fermentation {'>'}24h) must be done at 4–6°C with low yeast</li>
+              <li>❄️ Cold fermentation (if fermentation &gt; 24h) must be done at 4–6°C with low yeast</li>
               <li>⚖️ Recommended yeast:
                 <ul>
                   <li>• Dry yeast: 0.1–0.2%</li>
@@ -189,7 +285,9 @@ function App() {
             </ul>
 
             <div style={{ marginTop: '1.5rem' }}>
-              <p style={{ fontStyle: 'italic', fontSize: '0.95rem', marginBottom: '0.5rem' }}><strong>🔗 Official References:</strong></p>
+              <p style={{ fontStyle: 'italic', fontSize: '0.95rem', marginBottom: '0.5rem' }}>
+                <strong>🔗 Official References:</strong>
+              </p>
               <p style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>
                 📄 <a href="https://www.pizzanapoletana.org/public/pdf/Disciplinare-2024-ENG.pdf" target="_blank" rel="noopener noreferrer">
                   2024 AVPN Guidelines (PDF)
@@ -199,8 +297,7 @@ function App() {
                 </a>
               </p>
             </div>
-          </div>
-        </>
+          </div></>
       )}
     </div>
   );
