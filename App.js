@@ -1,8 +1,5 @@
-// React Native app for calculating Neapolitan pizza dough based on AVPN guidelines
-// Using Expo for simplicity
-
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, Button, ScrollView, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 export default function App() {
@@ -25,14 +22,14 @@ export default function App() {
     const hoursUntilBake = (new Date(targetTime) - new Date()) / 1000 / 3600;
 
     if (yeastType === 'dry') {
-      yeast = flour * (0.1 / 100); // 0.1% dry yeast for long fermentation
+      yeast = flour * (0.1 / 100);
     } else if (yeastType === 'fresh') {
-      yeast = flour * (0.25 / 100); // 0.25% fresh yeast
+      yeast = flour * (0.25 / 100);
     } else {
-      yeast = flour * (20 / 100); // 20% of flour weight as sourdough starter
+      yeast = flour * (20 / 100);
     }
 
-    const salt = flour * 0.03; // 3% salt
+    const salt = flour * 0.03;
 
     setResult({ flour, water, salt, yeast, yeastType, targetTime, hoursUntilBake });
   };
@@ -47,21 +44,36 @@ export default function App() {
       <Text>Size per Pizza (grams):</Text>
       <TextInput keyboardType="numeric" value={pizzaSize} onChangeText={setPizzaSize} style={{ borderWidth: 1, marginBottom: 10 }} />
 
-      <Text>Hydration % (e.g. 60):</Text>
+      <Text>Hydration %:</Text>
       <TextInput keyboardType="numeric" value={hydration} onChangeText={setHydration} style={{ borderWidth: 1, marginBottom: 10 }} />
 
       <Text>Flour Type:</Text>
-      <Picker selectedValue={flourType} onValueChange={setFlourType}>
-        <Picker.Item label="00 Flour" value="00" />
-        <Picker.Item label="Manitoba" value="manitoba" />
-      </Picker>
+      {Platform.OS === 'web' ? (
+        <select value={flourType} onChange={e => setFlourType(e.target.value)} style={{ marginBottom: 10 }}>
+          <option value="00">00 Flour</option>
+          <option value="manitoba">Manitoba</option>
+        </select>
+      ) : (
+        <Picker selectedValue={flourType} onValueChange={setFlourType}>
+          <Picker.Item label="00 Flour" value="00" />
+          <Picker.Item label="Manitoba" value="manitoba" />
+        </Picker>
+      )}
 
       <Text>Yeast Type:</Text>
-      <Picker selectedValue={yeastType} onValueChange={setYeastType}>
-        <Picker.Item label="Dry Yeast" value="dry" />
-        <Picker.Item label="Fresh Yeast" value="fresh" />
-        <Picker.Item label="Sourdough" value="sourdough" />
-      </Picker>
+      {Platform.OS === 'web' ? (
+        <select value={yeastType} onChange={e => setYeastType(e.target.value)} style={{ marginBottom: 10 }}>
+          <option value="dry">Dry Yeast</option>
+          <option value="fresh">Fresh Yeast</option>
+          <option value="sourdough">Sourdough</option>
+        </select>
+      ) : (
+        <Picker selectedValue={yeastType} onValueChange={setYeastType}>
+          <Picker.Item label="Dry Yeast" value="dry" />
+          <Picker.Item label="Fresh Yeast" value="fresh" />
+          <Picker.Item label="Sourdough" value="sourdough" />
+        </Picker>
+      )}
 
       <Text>Target Cooking Time:</Text>
       <TextInput
@@ -94,3 +106,4 @@ export default function App() {
     </ScrollView>
   );
 }
+
