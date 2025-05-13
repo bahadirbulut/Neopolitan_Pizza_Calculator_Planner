@@ -1,16 +1,24 @@
-# Neapolitan Pizza Dough Calculator 🍕
+# 🍕 Neapolitan Pizza Calculator Planner
 
-This is a React Native (Expo) app that helps you calculate Neapolitan pizza dough measurements based on the official 2024 AVPN guidelines.
+A lightweight and interactive web app to calculate pizza dough ingredients and plan your fermentation schedule — based on the official 2024 AVPN guidelines.
 
-## Features
-- Set number of pizzas and size (in grams)
-- Choose hydration %, flour type, and yeast type
-- Specify when you want to cook
-- Get exact flour/water/salt/yeast quantities
-- See a step-by-step dough preparation timeline
+Built with **React + Vite**, this app helps you determine:
+- Flour, water, salt, and yeast quantities
+- Fermentation time until your chosen cook time
+- Step-by-step preparation timeline
 
-## Run the App
+## 🌐 Live Demo
+
+> Coming soon… (You can deploy to [Vercel](https://vercel.com/) or [Netlify](https://netlify.com/) easily!)
+
+## 📸 Screenshots
+
+_
+
+## 🚀 Getting Started
+
+### 1. Clone the repo
 
 ```bash
-npm install
-expo start
+git clone https://github.com/bahadirbulut/Neopolitan_Pizza_Calculator_Planner.git
+cd Neopolitan_Pizza_Calculator_Planner
