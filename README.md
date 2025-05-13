@@ -22,3 +22,28 @@ _
 ```bash
 git clone https://github.com/bahadirbulut/Neopolitan_Pizza_Calculator_Planner.git
 cd Neopolitan_Pizza_Calculator_Planner
+```
+
+### 2. Install dependencies
+```bash
+cd pizza-planner-web
+npm install
+```
+
+### 3. Run the development server
+```bash
+npm run dev
+```
+
+Open http://localhost:5173 to view it in the browser.
+
+## 🧱 Tech Stack
+React 18
+Vite
+CSS Modules
+
+## 📄 License
+MIT
+
+
+Made with ❤️ and 🍕 by Bahadir Bulut
