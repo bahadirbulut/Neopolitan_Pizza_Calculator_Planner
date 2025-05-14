@@ -1,0 +1,9 @@
+// The favicon.ico file must be a binary .ico file with multiple sizes
+// Here's how to create it:
+// 1. Go to https://favicon.io/favicon-converter/
+// 2. Upload the pizza-icon.svg we created
+// 3. Download the package and place the favicon.ico file in the public directory
+
+// This file is just a placeholder with instructions. You need to manually create a proper 
+// favicon.ico file following the instructions above or using a tool like 
+// https://realfavicongenerator.net/ as mentioned in the previous instructions.

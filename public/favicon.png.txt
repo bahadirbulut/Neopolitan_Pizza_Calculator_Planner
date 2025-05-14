@@ -1,0 +1,4 @@
+// This file is a placeholder for favicon.png
+// Since we can't directly create PNG files through this interface,
+// You'll need to convert the pizza-icon.svg to PNG format using an online converter
+// or image editing tool and save it as public/favicon.png

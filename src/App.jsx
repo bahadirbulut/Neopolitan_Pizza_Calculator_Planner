@@ -1,4 +1,5 @@
-// App.jsx
+// App.jsx - Main component for the Neapolitan Pizza Calculator
+// Note: Custom favicon is defined in index.html
 import { useState, useRef } from 'react';
 import './App.css';
 import {
