@@ -51,6 +51,7 @@ body {
   display: inline-block;
   transform-style: preserve-3d;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .header-tagline {

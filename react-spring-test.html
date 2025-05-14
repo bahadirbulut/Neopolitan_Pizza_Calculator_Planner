@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React Spring Test</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@react-spring/web@9.7.3/dist/web.umd.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .card {
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: #ff5252;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    h1, h2 {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>React Spring Test Page</h1>
+  <p>This page tests if React Spring is working correctly in your browser.</p>
+  
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState } = React;
+    const { useSpring, animated, config } = ReactSpringWeb;
+    
+    function App() {
+      const [flip, setFlip] = useState(false);
+      
+      const props = useSpring({
+        to: {
+          opacity: flip ? 1 : 0,
+          transform: flip ? 'rotateX(0deg)' : 'rotateX(180deg)',
+          background: flip ? '#ff5252' : '#3f51b5',
+        },
+        from: {
+          opacity: 0,
+          transform: 'rotateX(180deg)',
+          background: '#3f51b5',
+        },
+        config: config.molasses,
+      });
+      
+      return (
+        <div>
+          <div className="card">
+            <h2>Animation Test</h2>
+            <button onClick={() => setFlip(!flip)}>
+              Click to Animate
+            </button>
+            <div style={{ height: '150px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '20px' }}>
+              <animated.div className="box" style={props}>
+                React Spring
+              </animated.div>
+            </div>
+          </div>
+          
+          <div className="card">
+            <h2>If you see the animation, React Spring is working correctly!</h2>
+            <p>You can now use AnimatedTitle in your app.</p>
+          </div>
+        </div>
+      );
+    }
+    
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>

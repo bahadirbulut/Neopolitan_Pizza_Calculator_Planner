@@ -1,0 +1,31 @@
+.container {
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, ubuntu, roboto, noto,
+    segoe ui, arial, sans-serif;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.main {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.transitionsItem {
+  overflow: hidden;
+  width: 100%;
+  color: white;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  will-change: transform, opacity, height;
+  white-space: nowrap;
+  line-height: 80px;
+}
+
+.transitionsItem > div {
+  margin-left: 0;
+}

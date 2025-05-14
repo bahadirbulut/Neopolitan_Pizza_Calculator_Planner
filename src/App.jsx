@@ -19,9 +19,11 @@ import HotelIcon from '@mui/icons-material/Hotel';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import CircleIcon from '@mui/icons-material/Circle';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
-import { useSpring, animated, config } from 'react-spring'; // Added react-spring
+import { useSpring, animated, config } from '@react-spring/web'; // Added react-spring
 import React from 'react'; // Added React for ErrorBoundary
 import PizzaParallax from './PizzaParallax';
+// Import the AnimatedTitle component
+import AnimatedTitle from './components/AnimatedTitle';
 
 // Language translations
 const translations = {

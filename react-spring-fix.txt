@@ -1,0 +1,14 @@
+// Install react-spring properly
+npm install @react-spring/web
+
+// In the App.jsx file, change this line:
+import { useSpring, animated, config } from 'react-spring';
+
+// To this:
+import { useSpring, animated, config } from '@react-spring/web';
+
+// Make sure your package.json has this in dependencies:
+// "@react-spring/web": "^9.7.3",
+
+// Save the file and restart your dev server with:
+npm run dev
