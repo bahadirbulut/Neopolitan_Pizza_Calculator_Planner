@@ -1,357 +1,176 @@
-.container {
-  max-width: 850px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  font-family: 'Segoe UI', Tahoma, sans-serif;
+/* Italian flag colors */
+:root {
+  --italian-green: #009246;
+  --italian-white: #ffffff;
+  --italian-red: #ce2b37;
+  --italian-green-light: rgba(0, 146, 70, 0.1);
+  --italian-red-light: rgba(206, 43, 55, 0.1);
+  --italian-red-hover: #b02530;
+  --italian-green-hover: #007a3b;
+}
+
+body {
+  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
   color: #333;
-  transition: all 0.3s ease;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .app-header {
-  background: linear-gradient(135deg, #e63946 0%, #d62839 100%);
-  color: #ffffff;
-  padding: 2rem;
-  border-radius: 10px;
   text-align: center;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 30px;
   position: relative;
-  overflow: hidden;
-}
-
-.app-header::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="rgba(255,255,255,0.05)"/></svg>');
-  background-size: 100px 100px;
-  opacity: 0.3;
+  border-bottom: 3px solid var(--italian-green);
+  padding-bottom: 20px;
 }
 
 .app-header h1 {
-  margin: 0;
+  color: var(--italian-red);
+  margin-bottom: 5px;
   font-size: 2.2rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .header-tagline {
-  margin-top: 0.5rem;
-  font-size: 1rem;
-  opacity: 0.9;
+  color: var(--italian-green);
+  font-style: italic;
+  margin-top: 0;
 }
 
-label {
-  display: block;
-  margin-top: 1rem;
-  font-weight: 600;
-}
-
-input,
-select {
-  width: 100%;
-  padding: 0.5rem;
-  margin-top: 0.4rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-button {
-  margin-top: 1.5rem;
-  padding: 0.75rem;
-  background-color: #417ed5;
-  color: white;
-  font-size: 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #d62839;
+.language-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .input-box {
-  background-color: #f8f5e6;
-  padding: 25px;
+  background-color: var(--italian-white);
+  padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
-  border-left: 4px solid #e63946;
-  transform: translateZ(0);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.input-box:hover {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid var(--italian-green);
 }
 
 .input-box label {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  font-weight: 600;
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: bold;
   color: #333;
 }
 
 .input-box input, .input-box select {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
+  padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
-  background-color: #fff;
-  transition: border-color 0.3s, box-shadow 0.3s;
-  -webkit-appearance: none; /* For iOS */
-  appearance: none;
-  height: auto; /* Fixes height on mobile Safari */
-}
-
-.input-box input:focus, .input-box select:focus {
-  outline: none;
-  border-color: #e63946;
-  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
-}
-
-.input-box button {
-  background-color: #e63946;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  font-size: 16px;
   border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-.input-box button:hover {
-  background-color: #d1282a;
+  font-size: 16px;
+  margin-bottom: 10px;
 }
 
 .calculate-button {
-  background: linear-gradient(to right, #e63946, #d62839);
+  background-color: var(--italian-green);
   color: white;
   border: none;
-  padding: 14px 20px;
-  font-size: 1.1rem;
-  border-radius: 8px;
+  padding: 12px 24px;
+  margin-top: 20px;
+  border-radius: 5px;
+  font-size: 18px;
   cursor: pointer;
   width: 100%;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);
   display: flex;
-  align-items: center;
   justify-content: center;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  align-items: center;
+  transition: background-color 0.3s;
 }
 
 .calculate-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(230, 57, 70, 0.3);
-  background: linear-gradient(to right, #d62839, #e63946);
-}
-
-.calculate-button:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 8px rgba(230, 57, 70, 0.2);
+  background-color: var(--italian-green-hover);
 }
 
 .button-icon {
   margin-right: 10px;
-  font-size: 1.2rem;
 }
 
 .result-section {
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 1.5rem 2rem;
-  margin-top: 2rem;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background-color: #fff;
-  position: relative;
-  overflow: hidden;
-}
-
-.result-section::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 5px;
-  background: linear-gradient(to right, #e63946, #d62839);
-}
-
-.result-section:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-.result-section.recipe {
-  background-color: #fef9f4;
-}
-
-.result-section.timeline {
-  background-color: #f4faff;
-}
-
-.result-section.guidelines {
-  background-color: #f6f9f6;
+  background-color: var(--italian-white);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
 }
 
 .result-section h3 {
+  color: var(--italian-red);
   margin-top: 0;
-  font-size: 1.3rem;
-  color: #333;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  margin-bottom: 1.5rem;
-  display: inline-block;
-  background-color: rgba(230, 57, 70, 0.1);
-  position: relative;
-  font-weight: 600;
+  border-bottom: 2px solid var(--italian-green);
+  padding-bottom: 10px;
 }
 
 .recipe-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  border-radius: 8px;
-  overflow: hidden;
+  margin-top: 20px;
 }
 
 .recipe-table td {
-  padding: 0.75rem 1rem;
+  padding: 10px;
   border-bottom: 1px solid #eee;
-  font-size: 1rem;
 }
 
-.recipe-table tr:last-child td {
-  border-bottom: none;
+.recipe-table td:first-child {
+  font-weight: bold;
+  width: 40%;
 }
 
-.recipe-table tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-.recipe-table tr:hover {
-  background-color: #f5f5f5;
-}
-
-.avpn-guidelines {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 1rem;
-}
-
-.avpn-guidelines li {
-  margin-bottom: 1.2rem;
-  line-height: 1.5;
-  padding-left: 10px;
-  border-left: 3px solid rgba(230, 57, 70, 0.3);
-  padding-bottom: 5px;
-  transition: border-left-color 0.3s ease;
-}
-
-.avpn-guidelines li:hover {
-  border-left-color: rgba(230, 57, 70, 0.8);
-}
-
-.avpn-guidelines strong {
-  color: #e63946;
-}
-
-.avpn-guidelines ul {
-  padding-left: 1.25rem;
-  margin-top: 0.5rem;
-  font-size: 0.95rem;
-}
-
-.warning {
-  background-color: #fff3cd;
-  border-left: 5px solid #ffc107;
-  padding: 0.75rem 1rem;
-  margin-top: 1.2rem;
-  font-weight: 600;
-  color: #856404;
-  border-radius: 4px;
-}
-
-a {
-  color: #2a9d8f;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/* Material UI timeline spacing */
-.MuiTimelineItem-root {
-  margin-bottom: 1.5rem;
+.recipe-table td:last-child {
+  color: #666;
+  text-align: right;
 }
 
 .flour-info {
-  background-color: rgba(230, 57, 70, 0.05);
-  padding: 1rem;
-  border-left: 3px solid #e63946;
-  margin-bottom: 1.5rem;
-  border-radius: 0 6px 6px 0;
-  transition: all 0.3s ease;
-}
-
-.flour-info:hover {
-  background-color: rgba(230, 57, 70, 0.08);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: var(--italian-green-light);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
 .flour-info h4 {
   margin-top: 0;
-  margin-bottom: 0.5rem;
-  color: #e63946;
-  font-size: 1.1rem;
-}
-
-.flour-info p {
-  margin: 0.4rem 0;
-  font-size: 0.95rem;
+  color: var(--italian-green);
 }
 
 .instruction-section {
-  white-space: pre-line;
-  line-height: 1.6;
+  white-space: pre-wrap;
 }
 
-.method-header {
-  font-weight: 700;
-  margin-top: 0.5rem;
-  margin-bottom: 0.3rem;
-  color: #e63946;
+.avpn-guidelines {
+  list-style-type: none;
+  padding-left: 0;
 }
 
-/* Responsive */
+.avpn-guidelines > li {
+  margin-bottom: 20px;
+}
+
+.avpn-guidelines ul {
+  list-style-type: disc;
+}
+
+.avpn-guidelines li strong {
+  color: var(--italian-red);
+}
+
 @media (max-width: 768px) {
   .container {
-    padding: 1.5rem;
-    margin: 1rem;
-    max-width: 100%;
+    padding: 10px;
   }
   
   .app-header h1 {
@@ -359,88 +178,6 @@ a:hover {
   }
   
   .result-section {
-    padding: 1.2rem 1.5rem;
-  }
-  
-  .result-section h3 {
-    font-size: 1.1rem;
-  }
-  
-  .timeline-content {
-    padding-right: 0;
-  }
-  
-  /* Make timeline more compact on mobile */
-  .MuiTimelineItem-root {
-    min-height: 60px;
-  }
-  
-  .MuiTimelineOppositeContent-root {
-    flex: 0.5 !important;
-  }
-
-  .input-box input, .input-box select, .input-box button {
-    padding: 14px;
-    font-size: 16px; /* Prevents zoom on iOS */
-  }
-  
-  /* Fix for date-time picker on iOS */
-  input[type="datetime-local"] {
-    min-height: 44px;
-  }
-}
-
-@media (max-width: 600px) {
-  Typography.instruction-text {
-    font-size: 0.9rem;
-  }
-  
-  .method-header {
-    font-size: 0.95rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 1rem;
-    margin: 0.5rem;
-    width: calc(100% - 1rem);
-    box-sizing: border-box;
-  }
-  
-  .app-header {
-    padding: 1.5rem 1rem;
-  }
-  
-  .app-header h1 {
-    font-size: 1.5rem;
-  }
-  
-  .input-box {
-    padding: 1.25rem;
-  }
-  
-  .recipe-table td {
-    padding: 0.5rem;
-    font-size: 0.9rem;
-  }
-  
-  /* Improve timeline spacing on small screens */
-  .MuiTimelineItem-missingOppositeContent {
-    padding-left: 0 !important;
-  }
-  
-  .MuiTimelineContent-root {
-    padding-left: 12px !important;
-  }
-  
-  /* Force the guidelines to be more readable on mobile */
-  .avpn-guidelines li {
-    padding-left: 8px;
-    margin-bottom: 1.5rem;
-  }
-  
-  .avpn-guidelines ul {
-    padding-left: 1rem;
+    padding: 15px;
   }
 }

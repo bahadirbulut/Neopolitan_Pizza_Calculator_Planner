@@ -563,12 +563,11 @@ function App() {
       }
     }, 100);
   };
-
   const getYeastColor = (type) => {
     switch (type) {
       case 'sourdough': return '#8e44ad';
-      case 'fresh': return '#f39c12';
-      default: return '#3498db';
+      case 'fresh': return 'var(--italian-red)';
+      default: return 'var(--italian-green)';
     }
   };
 
@@ -743,22 +742,26 @@ function App() {
                     }}
                   >
                     {formatDate(step.time)}
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
-                    <TimelineDot color={step.color || 'grey'} sx={step.dotColor ? { backgroundColor: step.dotColor } : {}}>
+                  </TimelineOppositeContent>                  <TimelineSeparator>
+                    <TimelineDot color={step.color || 'grey'} sx={{
+                      backgroundColor: step.dotColor ? step.dotColor : 
+                        step.color === 'primary' ? 'var(--italian-green)' :
+                        step.color === 'secondary' ? '#777' :
+                        step.color === 'success' ? 'var(--italian-green)' :
+                        step.color === 'error' ? 'var(--italian-red)' : 'grey'
+                    }}>
                       {step.icon}
                     </TimelineDot>
                     {idx < 4 && <TimelineConnector />}
-                  </TimelineSeparator>                  <TimelineContent>
-                    <motion.div initial={{ opacity: 0, translateY: 30 }} whileInView={{ opacity: 1, translateY: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-                      <Typography variant="h6" 
+                  </TimelineSeparator><TimelineContent>
+                    <motion.div initial={{ opacity: 0, translateY: 30 }} whileInView={{ opacity: 1, translateY: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>                      <Typography variant="h6" 
                         onClick={() => setExpandedStep(expandedStep === idx ? null : idx)}
                         sx={{ 
                           cursor: 'pointer', 
                           display: 'flex', 
                           alignItems: 'center', 
                           justifyContent: 'space-between',
-                          color: expandedStep === idx ? '#e63946' : 'inherit',
+                          color: expandedStep === idx ? 'var(--italian-red)' : 'inherit',
                           transition: 'color 0.3s ease'
                         }}
                       >
@@ -770,8 +773,8 @@ function App() {
                         <Typography sx={{ 
                           mt: 1, 
                           p: 1.5, 
-                          backgroundColor: 'rgba(230, 57, 70, 0.05)', 
-                          borderLeft: '3px solid #e63946',
+                          backgroundColor: 'var(--italian-red-light)', 
+                          borderLeft: '3px solid var(--italian-red)',
                           borderRadius: '0 4px 4px 0',
                           transition: 'all 0.3s ease'
                         }} className="instruction-section">
