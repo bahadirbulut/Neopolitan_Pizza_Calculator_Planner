@@ -1,5 +1,5 @@
 // App.jsx
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './App.css';
 import {
   Timeline,
@@ -23,11 +23,23 @@ function App() {
   const [pizzaSize, setPizzaSize] = useState(250);
   const [hydration, setHydration] = useState(60);
   const [flourType, setFlourType] = useState('00');
-  const [yeastType, setYeastType] = useState('dry');
-  const [targetTime, setTargetTime] = useState('2025-05-13T20:00');
-  const [result, setResult] = useState(null);
+  const [yeastType, setYeastType] = useState('dry');  const yeastFermentationHours = { dry: 8, fresh: 12, sourdough: 16 };
+  const recipeRef = useRef(null);
+  
+  const toLocalDatetimeInputValue = (date) => {
+    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 16);
+  };
+    const getInitialTargetTime = (type) => {
+    const localNow = new Date();
+    // Add fermentation hours plus 10 minutes (600000 ms)
+    return new Date(localNow.getTime() + (yeastFermentationHours[type] * 60 * 60 * 1000) + 600000);
+  };
+  const defaultTargetTime = getInitialTargetTime(yeastType);
+  const [targetTime, setTargetTime] = useState(() => toLocalDatetimeInputValue(defaultTargetTime));  const [result, setResult] = useState(null);
   const [warning, setWarning] = useState('');
   const [suggestedTime, setSuggestedTime] = useState(null);
+  const [guidelinesExpanded, setGuidelinesExpanded] = useState(false);
 
   const formatDate = (date) => {
     const d = new Date(date);
@@ -39,11 +51,6 @@ function App() {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
-  const toLocalDatetimeInputValue = (date) => {
-    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-    return local.toISOString().slice(0, 16);
-  };
-
   const calculateDough = () => {
     const now = new Date();
     const bakeTime = new Date(targetTime);
@@ -53,10 +60,8 @@ function App() {
       dry: 8,
       fresh: 12,
       sourdough: 16,
-    };
-
-    const requiredHours = minHoursRequired[yeastType];
-    const earliestValidTime = new Date(now.getTime() + requiredHours * 60 * 60 * 1000 + 60 * 1000);
+    };    const requiredHours = minHoursRequired[yeastType];
+    const earliestValidTime = new Date(now.getTime() + requiredHours * 60 * 60 * 1000 + 600000); // Add 10 minutes (600000 ms)
 
     if (hoursUntilBake < requiredHours) {
       const formattedEarliest = formatDate(earliestValidTime);
@@ -92,9 +97,7 @@ function App() {
     const restTime = new Date(mixTime.getTime() + 20 * 60 * 1000);
     const ballTime = new Date(bakeTime.getTime() - 2 * 60 * 60 * 1000);
     const bulkStart = restTime;
-    const bulkEnd = ballTime;
-
-    setResult({
+    const bulkEnd = ballTime;    setResult({
       flour,
       water,
       salt,
@@ -112,6 +115,13 @@ function App() {
       ballTime,
       bakeTime,
     });
+    
+    // Scroll to recipe section after calculation is successful
+    setTimeout(() => {
+      if (recipeRef.current) {
+        recipeRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   };
 
   const getYeastColor = (type) => {
@@ -126,9 +136,7 @@ function App() {
     <div className="container">
       <div className="app-header">
         <h1>Neapolitan Pizza Dough Calculator</h1>
-      </div>
-
-      <div className="input-box">
+      </div>      <div className="input-box">
         <label>Number of Pizzas:</label>
         <input type="number" value={pizzaCount} onChange={e => setPizzaCount(Number(e.target.value))} />
 
@@ -144,8 +152,12 @@ function App() {
           <option value="manitoba">Manitoba</option>
         </select>
 
-        <label>Yeast Type:</label>
-        <select value={yeastType} onChange={e => setYeastType(e.target.value)}>
+        <label>Yeast Type:</label>        <select value={yeastType} onChange={e => {
+            const selectedType = e.target.value;
+            setYeastType(selectedType);
+            const newTime = new Date(Date.now() + (yeastFermentationHours[selectedType] * 60 * 60 * 1000) + 600000);
+            setTargetTime(toLocalDatetimeInputValue(newTime));
+          }}> 
           <option value="dry">Dry Yeast</option>
           <option value="fresh">Fresh Yeast</option>
           <option value="sourdough">Sourdough</option>
@@ -205,11 +217,9 @@ function App() {
             )}
           </div>
         )}
-      </div>
-
-      {result && (
+      </div>      {result && (
         <>
-          <div className="result-section recipe">
+          <div className="result-section recipe" ref={recipeRef}>
             <h3>📦 Dough Recipe</h3>
             <table className="recipe-table">
               <tbody>
@@ -262,32 +272,94 @@ function App() {
                 </TimelineItem>
               ))}
             </Timeline>
-          </div>
-
-          <div className="result-section guidelines">
-            <h3>📜 AVPN Official Fermentation Recommendations</h3>
-            <ul className="avpn-guidelines">
-              <li><strong>🕒 Total Fermentation:</strong><br />- <strong>Dry Yeast:</strong> Minimum <strong>8 hours</strong><br />- <strong>Fresh Yeast:</strong> Minimum <strong>12 hours</strong><br />- <strong>Sourdough Starter:</strong> Minimum <strong>16 hours</strong> (ideally 24h+)</li>
-              <li><strong>🌡️ Dough Temperature:</strong> ~22–25°C during room-temp fermentation</li>
-              <li><strong>❄️ Cold Fermentation:</strong> If fermentation &gt; 24h, store at <strong>4–6°C</strong> with low yeast</li>
-              <li><strong>⚖️ Recommended Yeast Amounts:</strong>
-                <ul style={{ paddingLeft: '1.2rem', marginTop: '0.3rem' }}>
-                  <li>Dry Yeast: <strong>0.1–0.2%</strong></li>
-                  <li>Fresh Yeast: <strong>0.2–0.3%</strong></li>
-                  <li>Sourdough Starter: <strong>~20%</strong> of flour weight</li>
+          </div>          <div className="result-section guidelines">
+            <h3 
+              onClick={() => setGuidelinesExpanded(!guidelinesExpanded)} 
+              style={{ 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                userSelect: 'none'
+              }}
+            >
+              📜 AVPN Official Guidelines Summary
+              <span style={{ fontSize: '1rem' }}>
+                {guidelinesExpanded ? '▼' : '▶'}
+              </span>
+            </h3>
+            
+            {guidelinesExpanded && (
+              <>
+                <ul className="avpn-guidelines">
+                  <li><strong>🌾 Flour Specifications:</strong>
+                    <ul style={{ paddingLeft: '1.2rem', marginTop: '0.3rem' }}>
+                      <li>Type 00 flour with W value between 250-320</li>
+                      <li>Protein content: 11-13.5%</li>
+                      <li>Absorption rate: 55-62%</li>
+                    </ul>
+                  </li>
+                  <li><strong>🧂 Ingredient Percentages:</strong>
+                    <ul style={{ paddingLeft: '1.2rem', marginTop: '0.3rem' }}>
+                      <li>Water: <strong>55-62%</strong> of flour weight (hydration)</li>
+                      <li>Salt: <strong>2-3%</strong> of flour weight</li>
+                      <li>Fresh Yeast: <strong>0.2-0.3%</strong> of flour weight</li>
+                      <li>Dry Yeast: <strong>0.1-0.2%</strong> of flour weight</li>
+                      <li>Sourdough Starter: <strong>5-20%</strong> of flour weight</li>
+                    </ul>
+                  </li>
+                  <li><strong>🕒 Fermentation Requirements:</strong>
+                    <ul style={{ paddingLeft: '1.2rem', marginTop: '0.3rem' }}>
+                      <li>Direct Method with Fresh Yeast: minimum <strong>8-12 hours</strong></li>
+                      <li>Direct Method with Dry Yeast: minimum <strong>8 hours</strong></li>
+                      <li>Sourdough Method: minimum <strong>16-24 hours</strong></li>
+                      <li>Poolish Method: minimum <strong>16-18 hours</strong> (4-6h for pre-ferment + 12h for dough)</li>
+                      <li>Biga Method: minimum <strong>18-24 hours</strong> (6-18h for pre-ferment + 12h for dough)</li>
+                    </ul>
+                  </li>
+                  <li><strong>🌡️ Temperature Controls:</strong>
+                    <ul style={{ paddingLeft: '1.2rem', marginTop: '0.3rem' }}>
+                      <li>Room Temperature Fermentation: <strong>22-25°C</strong></li>
+                      <li>Cold Fermentation: <strong>4-6°C</strong></li>
+                      <li>Dough Temperature after Mixing: <strong>23-25°C</strong></li>
+                    </ul>
+                  </li>
+                  <li><strong>🥣 Preparation Process:</strong>
+                    <ul style={{ paddingLeft: '1.2rem', marginTop: '0.3rem' }}>
+                      <li>Mixing: 10-15 minutes until smooth texture</li>
+                      <li>First Rest: 20-30 minutes at room temperature</li>
+                      <li>Bulk Fermentation: 6-24 hours depending on method</li>
+                      <li>Balling: Form dough balls of 200-280g</li>
+                      <li>Final Proof: Approximately <strong>2 hours</strong> before baking</li>
+                    </ul>
+                  </li>
+                  <li><strong>🍕 Cooking Specifications:</strong>
+                    <ul style={{ paddingLeft: '1.2rem', marginTop: '0.3rem' }}>
+                      <li>Oven Temperature: <strong>430-480°C</strong></li>
+                      <li>Cooking Surface: <strong>380-430°C</strong></li>
+                      <li>Cooking Time: <strong>60-90 seconds</strong></li>
+                      <li>Traditional Wood-fired Oven Recommended</li>
+                      <li>Final Diameter: 22-35cm with raised border (cornicione) of 1-2cm</li>
+                    </ul>
+                  </li>
+                  <li><strong>⚠️ Important Notes:</strong>
+                    <ul style={{ paddingLeft: '1.2rem', marginTop: '0.3rem' }}>
+                      <li>No mechanical or automated press devices allowed</li>
+                      <li>Manual handling and stretching only</li>
+                      <li>No rolling pins or mechanical dough shaping</li>
+                      <li>No oils or fats in the dough (except on the surface for storage)</li>
+                    </ul>
+                  </li>
                 </ul>
-              </li>
-              <li><strong>⏲️ Balling:</strong> Should be done approximately <strong>2 hours</strong> before baking</li>
-              <li><strong>🥣 Dough Handling:</strong> Must be kneaded until smooth and elastic, then rested before bulk fermentation</li>
-              <li><strong>🧬 Sourdough:</strong> Requires an active, refreshed starter and tighter temperature control</li>
-            </ul>
-            <div style={{ marginTop: '1.5rem' }}>
-              <p style={{ fontStyle: 'italic', fontSize: '0.95rem', marginBottom: '0.5rem' }}><strong>🔗 Official References:</strong></p>
-              <p style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>
-                📄 <a href="https://www.pizzanapoletana.org/public/pdf/Disciplinare-2024-ENG.pdf" target="_blank" rel="noopener noreferrer">2024 AVPN Guidelines (PDF)</a><br />
-                🌐 <a href="https://www.pizzanapoletana.org/en/ricetta_pizza_napoletana" target="_blank" rel="noopener noreferrer">AVPN Pizza Napoletana Recipe (Webpage)</a>
-              </p>
-            </div>
+                <div style={{ marginTop: '1.5rem' }}>
+                  <p style={{ fontStyle: 'italic', fontSize: '0.95rem', marginBottom: '0.5rem' }}><strong>🔗 Official References:</strong></p>
+                  <p style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>
+                    📄 <a href="https://www.pizzanapoletana.org/public/pdf/Disciplinare-2024-ENG.pdf" target="_blank" rel="noopener noreferrer">2024 AVPN Guidelines (PDF)</a><br />
+                    🌐 <a href="https://www.pizzanapoletana.org/en/ricetta_pizza_napoletana" target="_blank" rel="noopener noreferrer">AVPN Pizza Napoletana Recipe (Webpage)</a>
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         </>
       )}
