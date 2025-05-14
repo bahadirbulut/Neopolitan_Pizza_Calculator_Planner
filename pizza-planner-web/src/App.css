@@ -308,6 +308,32 @@ a:hover {
   margin-bottom: 1.5rem;
 }
 
+.flour-info {
+  background-color: rgba(230, 57, 70, 0.05);
+  padding: 1rem;
+  border-left: 3px solid #e63946;
+  margin-bottom: 1.5rem;
+  border-radius: 0 6px 6px 0;
+  transition: all 0.3s ease;
+}
+
+.flour-info:hover {
+  background-color: rgba(230, 57, 70, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.flour-info h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #e63946;
+  font-size: 1.1rem;
+}
+
+.flour-info p {
+  margin: 0.4rem 0;
+  font-size: 0.95rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .container {

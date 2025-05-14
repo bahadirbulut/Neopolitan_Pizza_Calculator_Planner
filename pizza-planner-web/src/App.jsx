@@ -18,7 +18,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import { motion } from 'framer-motion';
 
-function App() {
+function App() {  
   const [pizzaCount, setPizzaCount] = useState(4);
   const [pizzaSize, setPizzaSize] = useState(250);
   const [hydration, setHydration] = useState(60);
@@ -26,6 +26,67 @@ function App() {
   const [yeastType, setYeastType] = useState('dry');
   const yeastFermentationHours = { dry: 8, fresh: 12, sourdough: 16 };
   const recipeRef = useRef(null);
+  const [expandedStep, setExpandedStep] = useState(null);
+  
+  // Flour characteristics by type
+  const flourCharacteristics = {
+    '00': { 
+      hydrationRange: [55, 62], 
+      proteinContent: '11-13.5%', 
+      description: 'Fine Italian flour ideal for Neapolitan pizza',
+      saltPercentage: 3.0,
+      yeastMultiplier: 1.0
+    },
+    'bread': { 
+      hydrationRange: [60, 65], 
+      proteinContent: '12-14%', 
+      description: 'High protein content, great structure',
+      saltPercentage: 2.5,
+      yeastMultiplier: 0.9
+    },
+    'allpurpose': { 
+      hydrationRange: [60, 65], 
+      proteinContent: '10-12%', 
+      description: 'Versatile flour with moderate protein',
+      saltPercentage: 2.5,
+      yeastMultiplier: 1.1
+    },
+    'manitoba': { 
+      hydrationRange: [65, 70], 
+      proteinContent: '14-15%', 
+      description: 'Very strong Canadian flour for long fermentation',
+      saltPercentage: 2.8,
+      yeastMultiplier: 0.8
+    },
+    'whole': { 
+      hydrationRange: [65, 75], 
+      proteinContent: '13-14%', 
+      description: 'Whole wheat flour, more rustic flavor',
+      saltPercentage: 2.2,
+      yeastMultiplier: 1.2
+    },
+    'semolina': { 
+      hydrationRange: [55, 65], 
+      proteinContent: '12-13%', 
+      description: 'Durum wheat flour, adds texture and flavor',
+      saltPercentage: 2.8,
+      yeastMultiplier: 1.0
+    },
+    'spelt': { 
+      hydrationRange: [65, 75], 
+      proteinContent: '11-13%', 
+      description: 'Ancient grain with nutty flavor, less gluten',
+      saltPercentage: 2.0,
+      yeastMultiplier: 1.3
+    },
+    'rye': { 
+      hydrationRange: [70, 85], 
+      proteinContent: '9-11%', 
+      description: 'Distinctive flavor, use in combination with wheat flour',
+      saltPercentage: 2.0,
+      yeastMultiplier: 1.4
+    }
+  };
   
   // Check if the screen is mobile-sized
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -40,10 +101,20 @@ function App() {
     return new Date(localNow.getTime() + (yeastFermentationHours[type] * 60 * 60 * 1000) + 600000);
   };
   const defaultTargetTime = getInitialTargetTime(yeastType);
-  const [targetTime, setTargetTime] = useState(() => toLocalDatetimeInputValue(defaultTargetTime));  const [result, setResult] = useState(null);
+  const [targetTime, setTargetTime] = useState(() => toLocalDatetimeInputValue(defaultTargetTime));  
+  const [result, setResult] = useState(null);
   const [warning, setWarning] = useState('');
   const [suggestedTime, setSuggestedTime] = useState(null);
   const [guidelinesExpanded, setGuidelinesExpanded] = useState(false);
+
+  // Define detailed instructions for each timeline step based on AVPN guidelines
+  const timelineInstructions = {
+    mix: "Mix the ingredients starting with water (room temperature), then dissolve the salt. Gradually add small amounts of flour, mixing continuously, then add yeast. Knead vigorously for 10-15 minutes until the dough is smooth and elastic with no lumps. The finished dough should be soft, smooth, and sticky to the touch.",
+    rest: "Allow the dough mass to rest on a work surface covered with a damp cloth, or in a food container for about 20-30 minutes. This initial rest period allows the dough to relax and begin gluten formation, making it easier to portion later.",
+    bulk: "For room temperature fermentation, maintain the dough at 22-25°C. For longer fermentation time (over 16 hours), place in refrigerator (4-6°C). The dough must be stored in sealed food containers to prevent surface drying. Rising time varies based on temperature and yeast type following AVPN standards.",
+    balling: "Divide the dough into balls (200-280g each depending on desired pizza size) using a spatula or scraper. Minimal handling is required, and the dough should only be shaped by folding the edges from bottom to top. Ball shaping should be completed in a few seconds. Place shaped balls in proofing boxes with a light dusting of flour between them.",
+    bake: "Prepare your oven - traditional wood-fired oven should reach 430-480°C with cooking surface at 380-430°C. Using a pizza peel, stretch the dough disc by hand to 3mm thickness (1-2cm for the crust border). Add toppings and bake for 60-90 seconds, rotating as needed. The pizza should have raised, golden cornicione with charred spots."
+  };
 
   const formatDate = (date) => {
     const d = new Date(date);
@@ -64,7 +135,8 @@ function App() {
       dry: 8,
       fresh: 12,
       sourdough: 16,
-    };    const requiredHours = minHoursRequired[yeastType];
+    };    
+    const requiredHours = minHoursRequired[yeastType];
     const earliestValidTime = new Date(now.getTime() + requiredHours * 60 * 60 * 1000 + 600000); // Add 10 minutes (600000 ms)
 
     if (hoursUntilBake < requiredHours) {
@@ -80,28 +152,33 @@ function App() {
     } else {
       setWarning('');
       setSuggestedTime(null);
-    }
-
+    }    
     const doughWeight = pizzaCount * pizzaSize;
     const hydrationRatio = hydration / 100;
     const flour = doughWeight / (1 + hydrationRatio);
     const water = flour * hydrationRatio;
-    const salt = flour * 0.03;
+    
+    // Use flour-specific salt percentage
+    const saltPercentage = flourCharacteristics[flourType].saltPercentage / 100;
+    const salt = flour * saltPercentage;
 
+    // Adjust yeast based on flour type
+    const yeastMultiplier = flourCharacteristics[flourType].yeastMultiplier;
     let yeast;
     if (yeastType === 'dry') {
-      yeast = flour * 0.001;
+      yeast = flour * 0.001 * yeastMultiplier;
     } else if (yeastType === 'fresh') {
-      yeast = flour * 0.0025;
+      yeast = flour * 0.0025 * yeastMultiplier;
     } else {
-      yeast = flour * 0.20;
+      yeast = flour * 0.20 * yeastMultiplier;
     }
 
     const mixTime = now;
     const restTime = new Date(mixTime.getTime() + 20 * 60 * 1000);
     const ballTime = new Date(bakeTime.getTime() - 2 * 60 * 60 * 1000);
     const bulkStart = restTime;
-    const bulkEnd = ballTime;    setResult({
+    const bulkEnd = ballTime;    
+    setResult({
       flour,
       water,
       salt,
@@ -137,10 +214,12 @@ function App() {
   };
 
   return (
-    <div className="container">      <div className="app-header">
+    <div className="container">      
+      <div className="app-header">
         <h1>Neapolitan Pizza Dough Calculator</h1>
         <p className="header-tagline">Based on AVPN authentic guidelines</p>
-      </div><div className="input-box">
+      </div>
+      <div className="input-box">
         <label>Number of Pizzas:</label>
         <input type="number" value={pizzaCount} onChange={e => setPizzaCount(Number(e.target.value))} />
 
@@ -148,15 +227,29 @@ function App() {
         <input type="number" value={pizzaSize} onChange={e => setPizzaSize(Number(e.target.value))} />
 
         <label>Hydration %:</label>
-        <input type="number" value={hydration} onChange={e => setHydration(Number(e.target.value))} />
-
+        <input type="number" value={hydration} onChange={e => setHydration(Number(e.target.value))} />        
         <label>Flour Type:</label>
-        <select value={flourType} onChange={e => setFlourType(e.target.value)}>
-          <option value="00">00 Flour</option>
-          <option value="manitoba">Manitoba</option>
+        <select value={flourType} onChange={e => {
+          const newFlourType = e.target.value;
+          setFlourType(newFlourType);
+          
+          // Adjust hydration to middle of recommended range for the selected flour
+          const [minHydration, maxHydration] = flourCharacteristics[newFlourType].hydrationRange;
+          const recommendedHydration = Math.round((minHydration + maxHydration) / 2);
+          setHydration(recommendedHydration);
+        }}>
+          <option value="00">00 Flour (Neapolitan)</option>
+          <option value="bread">Bread Flour</option>
+          <option value="allpurpose">All-Purpose Flour</option>
+          <option value="manitoba">Manitoba Flour</option>
+          <option value="whole">Whole Wheat Flour</option>
+          <option value="semolina">Semolina Flour</option>
+          <option value="spelt">Spelt Flour</option>
+          <option value="rye">Rye Flour</option>
         </select>
 
-        <label>Yeast Type:</label>        <select value={yeastType} onChange={e => {
+        <label>Yeast Type:</label>        
+        <select value={yeastType} onChange={e => {
             const selectedType = e.target.value;
             setYeastType(selectedType);
             const newTime = new Date(Date.now() + (yeastFermentationHours[selectedType] * 60 * 60 * 1000) + 600000);
@@ -224,14 +317,21 @@ function App() {
             )}
           </div>
         )}
-      </div>      {result && (
-        <>          <div className="result-section recipe" ref={recipeRef}>
+      </div>      
+      {result && (
+        <>          
+          <div className="result-section recipe" ref={recipeRef}>
             <h3>📦 Dough Recipe</h3>
             <motion.div 
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ duration: 0.5 }}
             >
+              <div className="flour-info">
+                <h4>{flourCharacteristics[flourType].description}</h4>
+                <p><strong>Protein Content:</strong> {flourCharacteristics[flourType].proteinContent}</p>
+                <p><strong>Recommended Hydration:</strong> {flourCharacteristics[flourType].hydrationRange[0]}-{flourCharacteristics[flourType].hydrationRange[1]}%</p>
+              </div>
               <table className="recipe-table">
                 <tbody>
                   <tr><td>Flour</td><td>{result.flour.toFixed(1)} g</td><td>(100%)</td></tr>
@@ -248,20 +348,21 @@ function App() {
                 <strong>Fermentation Time:</strong> ~{result.hoursUntilBake.toFixed(1)} hours
               </p>
             </motion.div>
-          </div>          <div className="result-section timeline">
+          </div>          
+          <div className="result-section timeline">
             <h3>🧭 Example Timeline</h3>
             <Timeline position={isMobile ? "alternate" : "right"}>
               {[
-                { time: result.mixTime, title: 'Mix', desc: 'Start combining your ingredients.', icon: <AccessTimeIcon />, color: 'primary' },
-                { time: result.restTime, title: 'Rest', desc: 'Let the dough relax 20 min.', icon: <HotelIcon />, color: 'secondary' },
+                { time: result.mixTime, title: 'Mix', desc: timelineInstructions.mix, icon: <AccessTimeIcon />, color: 'primary' },
+                { time: result.restTime, title: 'Rest', desc: timelineInstructions.rest, icon: <HotelIcon />, color: 'secondary' },
                 {
                   time: result.bulkStart,
                   title: 'Bulk Fermentation',
-                  desc: `${result.hoursUntilBake > 16 ? 'Cold ferment' : 'Room temp'} for ${Math.floor((result.bulkEnd - result.bulkStart) / 3600000)}h ${Math.round(((result.bulkEnd - result.bulkStart) % 3600000) / 60000)}m`,
+                  desc: timelineInstructions.bulk,
                   icon: <InventoryIcon sx={{ color: '#fff' }} />, dotColor: getYeastColor(yeastType)
                 },
-                { time: result.ballTime, title: 'Balling', desc: 'Shape dough balls 2h before bake.', icon: <CircleIcon />, color: 'success' },
-                { time: result.bakeTime, title: 'Ready to Bake', desc: 'Fire up your oven and enjoy 🍕', icon: <LocalFireDepartmentIcon />, color: 'error' },
+                { time: result.ballTime, title: 'Balling', desc: timelineInstructions.balling, icon: <CircleIcon />, color: 'success' },
+                { time: result.bakeTime, title: 'Ready to Bake', desc: timelineInstructions.bake, icon: <LocalFireDepartmentIcon />, color: 'error' },
               ].map((step, idx) => (
                 <TimelineItem key={idx} sx={{ alignItems: 'center' }}>
                   <TimelineOppositeContent 
@@ -282,17 +383,47 @@ function App() {
                       {step.icon}
                     </TimelineDot>
                     {idx < 4 && <TimelineConnector />}
-                  </TimelineSeparator>
-                  <TimelineContent>
+                  </TimelineSeparator>                  <TimelineContent>
                     <motion.div initial={{ opacity: 0, translateY: 30 }} whileInView={{ opacity: 1, translateY: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-                      <Typography variant="h6">{step.title}</Typography>
-                      <Typography>{step.desc}</Typography>
+                      <Typography variant="h6" 
+                        onClick={() => setExpandedStep(expandedStep === idx ? null : idx)}
+                        sx={{ 
+                          cursor: 'pointer', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'space-between',
+                          color: expandedStep === idx ? '#e63946' : 'inherit',
+                          transition: 'color 0.3s ease'
+                        }}
+                      >
+                        {step.title}
+                        <span style={{ fontSize: '0.9rem', marginLeft: '8px' }}>
+                          {expandedStep === idx ? '▼' : '▶'}
+                        </span>
+                      </Typography>
+                      {expandedStep === idx ? (
+                        <Typography sx={{ 
+                          mt: 1, 
+                          p: 1.5, 
+                          backgroundColor: 'rgba(230, 57, 70, 0.05)', 
+                          borderLeft: '3px solid #e63946',
+                          borderRadius: '0 4px 4px 0',
+                          transition: 'all 0.3s ease'
+                        }}>
+                          {step.desc}
+                        </Typography>
+                      ) : (
+                        <Typography sx={{ color: 'text.secondary', fontSize: '0.9rem' }}>
+                          {step.desc.substring(0, 60)}...
+                        </Typography>
+                      )}
                     </motion.div>
                   </TimelineContent>
                 </TimelineItem>
               ))}
             </Timeline>
-          </div>          <div className="result-section guidelines">
+          </div>          
+          <div className="result-section guidelines">
             <h3 
               onClick={() => setGuidelinesExpanded(!guidelinesExpanded)} 
               style={{ 
