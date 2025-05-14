@@ -1,49 +1,82 @@
-# 🍕 Neapolitan Pizza Calculator Planner
+# Neapolitan Pizza Dough Calculator
 
-A lightweight and interactive web app to calculate pizza dough ingredients and plan your fermentation schedule — based on the official 2024 AVPN guidelines.
+A professional web application for calculating authentic Neapolitan pizza dough recipes based on AVPN (Associazione Verace Pizza Napoletana) guidelines.
 
-Built with **React + Vite**, this app helps you determine:
-- Flour, water, salt, and yeast quantities
-- Fermentation time until your chosen cook time
-- Step-by-step preparation timeline
+![Neapolitan Pizza Calculator](https://i.imgur.com/YourImageHere.png)
 
-## 🌐 Live Demo
+## Features
 
-> Coming soon… (You can deploy to [Vercel](https://vercel.com/) or [Netlify](https://netlify.com/) easily!)
+- **Dynamic Dough Calculator**: Calculates precise ingredient amounts based on number of pizzas and size
+- **Multiple Flour Types**: Supports 8 different flour types with automatic adjustment of hydration and fermentation parameters:
+  - 00 Flour (Neapolitan)
+  - Bread Flour
+  - All-Purpose Flour
+  - Manitoba Flour
+  - Whole Wheat Flour
+  - Semolina Flour
+  - Spelt Flour
+  - Rye Flour
+- **Yeast Options**: Calculate for dry yeast, fresh yeast, or sourdough starter
+- **Fermentation Timeline**: Get a visual timeline for your dough preparation process
+- **AVPN Compliance**: All calculations follow the official AVPN guidelines for authentic Neapolitan pizza
+- **Responsive Design**: Works beautifully on all devices from desktop to mobile
+- **Interactive Timeline**: Detailed AVPN-compliant instructions for each step of the pizza-making process
+- **Home Oven Instructions**: Special instructions for baking in a regular home oven
 
-## 📸 Screenshots
+## How to Use
 
-_
+1. Enter the number of pizzas you want to make
+2. Specify the size (weight) of each pizza in grams
+3. Select your flour type (hydration adjusts automatically to recommended range)
+4. Choose your yeast type
+5. Set your target cooking time
+6. Click "Calculate Dough" to get your personalized recipe
+7. Follow the timeline for perfect execution
 
-## 🚀 Getting Started
+## About the Pizza Dough Calculator
 
-### 1. Clone the repo
+This calculator is designed to provide precise dough recipes for authentic Neapolitan pizza based on the official guidelines of the AVPN (Associazione Verace Pizza Napoletana). 
 
-```bash
-git clone https://github.com/bahadirbulut/Neopolitan_Pizza_Calculator_Planner.git
-cd Neopolitan_Pizza_Calculator_Planner
+It takes into account:
+- Different flour characteristics and absorption rates
+- Yeast type and fermentation requirements
+- AVPN recommendations for salt percentages
+- Optimal fermentation times based on yeast type
+
+## Development
+
+This project was built using:
+- React
+- Material-UI components
+- Framer Motion for animations
+
+## Installation and Setup
+
+1. Clone the repository:
+```
+git clone https://github.com/yourusername/neapolitan-pizza-calculator.git
 ```
 
-### 2. Install dependencies
-```bash
-cd pizza-planner-web
+2. Install dependencies:
+```
 npm install
 ```
 
-### 3. Run the development server
-```bash
-npm run dev
+3. Start the development server:
+```
+npm start
 ```
 
-Open http://localhost:5173 to view it in the browser.
+4. Build for production:
+```
+npm run build
+```
 
-## 🧱 Tech Stack
-React 18
-Vite
-CSS Modules
+## License
 
-## 📄 License
-MIT
+[MIT License](LICENSE)
 
+## Acknowledgements
 
-Made with ❤️ and 🍕 by Bahadir Bulut
+- AVPN (Associazione Verace Pizza Napoletana) for their official guidelines
+- All pizza enthusiasts who contributed feedback and suggestions
