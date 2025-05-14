@@ -63,28 +63,53 @@ body {
   .app-header {
     flex-direction: column;
     align-items: flex-start;
+    padding-top: 10px; /* Add more space at the top */
   }
   
   .language-toggle {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -5px;
+    right: -5px;
     padding: 5px;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 4px;
     z-index: 10;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
   .title-container h1 {
-    font-size: 1.5rem;
-    padding-right: 60px; /* Make space for language toggle */
+    font-size: 1.4rem;
+    padding-right: 80px; /* Increase space for language toggle */
     line-height: 1.2;
     word-break: break-word;
+    margin-top: 5px;
   }
   
   .header-tagline {
     font-size: 0.8rem;
     margin-bottom: 0.5rem;
+  }
+}
+
+/* Extra small screens like Pixel phones */
+@media (max-width: 400px) {
+  .language-toggle {
+    top: -10px;
+    right: -5px;
+  }
+  
+  .title-container h1 {
+    font-size: 1.3rem;
+    padding-right: 90px; /* Even more space for language toggle */
+    margin-top: 15px; /* Push title down a bit more */
+  }
+  
+  .result-section.timeline {
+    padding: 15px 10px;
+  }
+  
+  .result-section.timeline h3 {
+    margin-bottom: 15px;
   }
 }
 

@@ -170,7 +170,7 @@ const translations = {
   },
   tr: {
     // App header
-    appTitle: "Napolitan Pizza Tarifi Hesaplayicisi",
+    appTitle: "Napoliten Pizza Tarifi Hesaplayicisi",
     tagline: "Otantik AVPN kurallarını temel almaktadir",
     
     // Input fields
@@ -584,13 +584,17 @@ function App() {
                 color="primary"
                 size={isMobile ? "small" : "medium"}
               />
-            }
-            label={language === 'en' ? 'Türkçe' : 'English'}
+            }            label={language === 'en' ? 'Türkçe' : 'English'}
             sx={{ 
               margin: '0',
               '& .MuiFormControlLabel-label': {
                 fontSize: isMobile ? '0.7rem' : '0.9rem',
                 fontWeight: 'bold'
+              },
+              '@media (max-width: 400px)': {
+                '& .MuiFormControlLabel-label': {
+                  fontSize: '0.65rem'
+                }
               }
             }}
           />
@@ -720,11 +724,22 @@ function App() {
                 <strong>{t.fermentationTime}</strong> ~{result.hoursUntilBake.toFixed(1)} {t.hours}
               </p>
             </motion.div>
-          </div>          
-          <div className="result-section timeline">
+          </div>            <div className="result-section timeline">
             <h3>{t.timelineTitle}</h3>
-            <Timeline position={isMobile ? "alternate" : "right"}>
-              {[
+            <Timeline position={isMobile ? "alternate" : "right"} sx={{
+              [`@media (max-width: 400px)`]: {
+                '.MuiTimelineItem-root': {
+                  minHeight: '70px',
+                  '&:before': {
+                    flex: 0.1,
+                    padding: '0px 8px',
+                  }
+                },
+                '.MuiTimelineOppositeContent-root': {
+                  margin: '6px 0'
+                }
+              }
+            }}>              {[
                 { time: result.mixTime, title: t.timelineSteps.mix.title, desc: t.timelineSteps.mix.desc, icon: <AccessTimeIcon />, color: 'primary' },
                 { time: result.restTime, title: t.timelineSteps.rest.title, desc: t.timelineSteps.rest.desc, icon: <HotelIcon />, color: 'secondary' },
                 {
@@ -735,17 +750,29 @@ function App() {
                 },
                 { time: result.ballTime, title: t.timelineSteps.balling.title, desc: t.timelineSteps.balling.desc, icon: <CircleIcon />, color: 'success' },
                 { time: result.bakeTime, title: t.timelineSteps.bake.title, desc: t.timelineSteps.bake.desc, icon: <LocalFireDepartmentIcon />, color: 'error' },
-              ].map((step, idx) => (
-                <TimelineItem key={idx} sx={{ alignItems: 'center' }}>
-                  <TimelineOppositeContent 
+              ].map((step, idx) => (                <TimelineItem key={idx} sx={{ 
+                  alignItems: 'center',
+                  marginBottom: '16px',
+                  '@media (max-width: 400px)': {
+                    marginBottom: '24px',
+                    '.MuiTimelineContent-root': {
+                      paddingLeft: '8px'
+                    }
+                  }
+                }}><TimelineOppositeContent 
                     sx={{ 
                       flex: {xs: 0.3, sm: 0.5, md: 0.8}, 
                       textAlign: 'right', 
-                      pr: {xs: 1, sm: 2, md: 3}, 
-                      fontSize: {xs: '0.85rem', sm: '0.9rem', md: '0.95rem'}, 
+                      pr: {xs: 2, sm: 2, md: 3}, 
+                      fontSize: {xs: '0.75rem', sm: '0.9rem', md: '0.95rem'}, 
                       color: 'gray', 
-                      minWidth: {xs: '70px', sm: '80px', md: '90px'}, 
-                      alignSelf: 'center' 
+                      minWidth: {xs: '85px', sm: '110px', md: '120px'}, 
+                      alignSelf: 'center',
+                      '@media (max-width: 400px)': {
+                        pr: 1,
+                        minWidth: '80px',
+                        fontSize: '0.65rem'
+                      }
                     }}
                   >
                     {formatDate(step.time)}
@@ -755,7 +782,15 @@ function App() {
                         step.color === 'primary' ? 'var(--italian-green)' :
                         step.color === 'secondary' ? '#777' :
                         step.color === 'success' ? 'var(--italian-green)' :
-                        step.color === 'error' ? 'var(--italian-red)' : 'grey'
+                        step.color === 'error' ? 'var(--italian-red)' : 'grey',
+                      '@media (max-width: 400px)': {
+                        padding: '4px',
+                        marginLeft: '4px',
+                        marginRight: '4px',
+                        '& .MuiSvgIcon-root': {
+                          fontSize: '1rem'
+                        }
+                      }
                     }}>
                       {step.icon}
                     </TimelineDot>
