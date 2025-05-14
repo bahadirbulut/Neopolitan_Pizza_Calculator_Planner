@@ -171,7 +171,7 @@ const translations = {
   tr: {
     // App header
     appTitle: "Napolitan Pizza Tarifi Hesaplayicisi",
-    tagline: "Otantik AVPN kurallarına temel almaktadir",
+    tagline: "Otantik AVPN kurallarını temel almaktadir",
     
     // Input fields
     pizzaCount: "Pizza Sayısı:",
@@ -292,7 +292,7 @@ const translations = {
         ]
       },
       cooking: {
-        title: "🍕 Pişirme Özellikleri:",
+        title: "🍕 Pişirme Koşulları:",
         items: [
           "Fırın Sıcaklığı: <strong>430-480°C</strong>",
           "Pişirme Yüzeyi: <strong>380-430°C</strong>",
