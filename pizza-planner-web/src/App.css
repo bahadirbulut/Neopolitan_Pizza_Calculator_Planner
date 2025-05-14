@@ -1,27 +1,51 @@
 .container {
-  max-width: 640px;
+  max-width: 850px;
   margin: 2rem auto;
   padding: 2rem;
   background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
   font-family: 'Segoe UI', Tahoma, sans-serif;
   color: #333;
+  transition: all 0.3s ease;
 }
 
 .app-header {
-  background-color: #417ed5;
+  background: linear-gradient(135deg, #e63946 0%, #d62839 100%);
   color: #ffffff;
-  padding: 1.25rem 1.5rem;
+  padding: 2rem;
   border-radius: 10px;
   text-align: center;
   margin-bottom: 2rem;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.app-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="rgba(255,255,255,0.05)"/></svg>');
+  background-size: 100px 100px;
+  opacity: 0.3;
 }
 
 .app-header h1 {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.header-tagline {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  opacity: 0.9;
 }
 
 label {
@@ -61,9 +85,15 @@ button:hover {
   background-color: #f8f5e6;
   padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
   margin-bottom: 30px;
   border-left: 4px solid #e63946;
+  transform: translateZ(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-box:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .input-box label {
@@ -107,18 +137,66 @@ button:hover {
   background-color: #d1282a;
 }
 
-.result-section {
-  border: 1px solid #ddd;
+.calculate-button {
+  background: linear-gradient(to right, #e63946, #d62839);
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  font-size: 1.1rem;
   border-radius: 8px;
-  padding: 1.25rem 1.5rem;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.calculate-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(230, 57, 70, 0.3);
+  background: linear-gradient(to right, #d62839, #e63946);
+}
+
+.calculate-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(230, 57, 70, 0.2);
+}
+
+.button-icon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+.result-section {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
   margin-top: 2rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-  transition: transform 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.result-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, #e63946, #d62839);
 }
 
 .result-section:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .result-section.recipe {
@@ -130,31 +208,47 @@ button:hover {
 }
 
 .result-section.guidelines {
-  background-color: #f4f9f4;
+  background-color: #f6f9f6;
 }
 
 .result-section h3 {
   margin-top: 0;
-  font-size: 1.25rem;
-  background-color: #2a9d8f;
-  color: #ffffff;
+  font-size: 1.3rem;
+  color: #333;
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   display: inline-block;
-  margin-left: 0.5rem;
+  background-color: rgba(230, 57, 70, 0.1);
+  position: relative;
+  font-weight: 600;
 }
 
 .recipe-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .recipe-table td {
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid #eee;
   font-size: 1rem;
+}
+
+.recipe-table tr:last-child td {
+  border-bottom: none;
+}
+
+.recipe-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.recipe-table tr:hover {
+  background-color: #f5f5f5;
 }
 
 .avpn-guidelines {
@@ -164,13 +258,25 @@ button:hover {
 }
 
 .avpn-guidelines li {
-  margin-bottom: 0.75rem;
-  line-height: 1.4;
+  margin-bottom: 1.2rem;
+  line-height: 1.5;
+  padding-left: 10px;
+  border-left: 3px solid rgba(230, 57, 70, 0.3);
+  padding-bottom: 5px;
+  transition: border-left-color 0.3s ease;
+}
+
+.avpn-guidelines li:hover {
+  border-left-color: rgba(230, 57, 70, 0.8);
+}
+
+.avpn-guidelines strong {
+  color: #e63946;
 }
 
 .avpn-guidelines ul {
   padding-left: 1.25rem;
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
   font-size: 0.95rem;
 }
 
@@ -199,12 +305,41 @@ a:hover {
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .app-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .result-section {
+    padding: 1.2rem 1.5rem;
+  }
+  
+  .result-section h3 {
+    font-size: 1.1rem;
+  }
+}
+
 @media (max-width: 480px) {
   .container {
     padding: 1rem;
+    margin: 0.5rem;
   }
-
+  
   .app-header h1 {
     font-size: 1.5rem;
+  }
+  
+  .input-box {
+    padding: 1.25rem;
+  }
+  
+  .recipe-table td {
+    padding: 0.5rem;
+    font-size: 0.9rem;
   }
 }

@@ -133,10 +133,10 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <div className="app-header">
+    <div className="container">      <div className="app-header">
         <h1>Neapolitan Pizza Dough Calculator</h1>
-      </div>      <div className="input-box">
+        <p className="header-tagline">Based on AVPN authentic guidelines</p>
+      </div><div className="input-box">
         <label>Number of Pizzas:</label>
         <input type="number" value={pizzaCount} onChange={e => setPizzaCount(Number(e.target.value))} />
 
@@ -166,7 +166,10 @@ function App() {
         <label>Target Cooking Time:</label>
         <input type="datetime-local" value={targetTime} onChange={e => setTargetTime(e.target.value)} />
 
-        <button onClick={calculateDough}>Calculate Dough</button>
+        <button onClick={calculateDough} className="calculate-button">
+          <span className="button-icon">🧮</span>
+          Calculate Dough
+        </button>
 
         {warning && (
           <div style={{
@@ -218,24 +221,29 @@ function App() {
           </div>
         )}
       </div>      {result && (
-        <>
-          <div className="result-section recipe" ref={recipeRef}>
+        <>          <div className="result-section recipe" ref={recipeRef}>
             <h3>📦 Dough Recipe</h3>
-            <table className="recipe-table">
-              <tbody>
-                <tr><td>Flour</td><td>{result.flour.toFixed(1)} g</td><td>(100%)</td></tr>
-                <tr><td>Water</td><td>{result.water.toFixed(1)} g</td><td>({result.waterPct.toFixed(1)}%)</td></tr>
-                <tr><td>Salt</td><td>{result.salt.toFixed(1)} g</td><td>({result.saltPct.toFixed(2)}%)</td></tr>
-                <tr>
-                  <td>{result.yeastType === 'sourdough' ? 'Sourdough Starter' : 'Yeast'}</td>
-                  <td>{result.yeast.toFixed(2)} g</td>
-                  <td>({result.yeastPct.toFixed(3)}%)</td>
-                </tr>
-              </tbody>
-            </table>
-            <p style={{ marginTop: '1.5rem' }}>
-              <strong>Fermentation Time:</strong> ~{result.hoursUntilBake.toFixed(1)} hours
-            </p>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ duration: 0.5 }}
+            >
+              <table className="recipe-table">
+                <tbody>
+                  <tr><td>Flour</td><td>{result.flour.toFixed(1)} g</td><td>(100%)</td></tr>
+                  <tr><td>Water</td><td>{result.water.toFixed(1)} g</td><td>({result.waterPct.toFixed(1)}%)</td></tr>
+                  <tr><td>Salt</td><td>{result.salt.toFixed(1)} g</td><td>({result.saltPct.toFixed(2)}%)</td></tr>
+                  <tr>
+                    <td>{result.yeastType === 'sourdough' ? 'Sourdough Starter' : 'Yeast'}</td>
+                    <td>{result.yeast.toFixed(2)} g</td>
+                    <td>({result.yeastPct.toFixed(3)}%)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p style={{ marginTop: '1.5rem' }}>
+                <strong>Fermentation Time:</strong> ~{result.hoursUntilBake.toFixed(1)} hours
+              </p>
+            </motion.div>
           </div>
 
           <div className="result-section timeline">
