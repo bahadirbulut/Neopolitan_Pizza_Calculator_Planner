@@ -1,6 +1,8 @@
 // App.jsx - Main component for the Neapolitan Pizza Calculator
 // Note: Custom favicon is defined in index.html
-import { useState, useRef } from 'react';
+console.log('App.jsx is loading...'); // Debug message to check if the file loads
+
+import { useState, useRef, useLayoutEffect } from 'react'; // Added useLayoutEffect
 import './App.css';
 import {
   Timeline,
@@ -17,7 +19,9 @@ import HotelIcon from '@mui/icons-material/Hotel';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import CircleIcon from '@mui/icons-material/Circle';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
-import { motion } from 'framer-motion';
+import { useSpring, animated, config } from 'react-spring'; // Added react-spring
+import React from 'react'; // Added React for ErrorBoundary
+import PizzaParallax from './PizzaParallax';
 
 // Language translations
 const translations = {
@@ -317,6 +321,42 @@ const translations = {
   }
 };
 
+// Helper component for expandable content with react-spring
+const ExpandableContent = ({ isVisible, children }) => {
+  const contentRef = useRef(null);
+  const [contentHeight, setContentHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    if (contentRef.current) {
+      setContentHeight(contentRef.current.scrollHeight);
+    }
+  }, [children, isVisible, contentRef]);
+
+  const animation = useSpring({
+    height: isVisible ? contentHeight : 0,
+    opacity: isVisible ? 1 : 0,
+    transform: isVisible ? 'translateY(0px)' : 'translateY(-10px)',
+    config: config.gentle,
+  });
+
+  return (
+    <animated.div style={{ ...animation, overflow: 'hidden' }}>
+      <div ref={contentRef}>
+        {children}
+      </div>
+    </animated.div>
+  );
+};
+
+const getYeastColor = (type) => {
+  console.log('getYeastColor called with type:', type); // Debug log
+  switch (type) {
+    case 'sourdough': return '#8e44ad'; // Purple for sourdough
+    case 'fresh': return 'var(--italian-red)'; // Red for fresh yeast
+    default: return 'var(--italian-green)'; // Green for dry yeast
+  }
+};
+
 function App() {  
   const [language, setLanguage] = useState('en');
   const t = translations[language];
@@ -329,7 +369,9 @@ function App() {
   const yeastFermentationHours = { dry: 8, fresh: 12, sourdough: 16 };
   const recipeRef = useRef(null);
   const [expandedStep, setExpandedStep] = useState(null);
-    // Flour characteristics by type
+  const [isCalculating, setIsCalculating] = useState(false); // Add loading state
+  
+  // Flour characteristics by type
   const flourCharacteristicsEN = {
     '00': { 
       hydrationRange: [55, 62], 
@@ -473,6 +515,28 @@ function App() {
 
   // Define timeline instructions to support translation
   const timelineInstructions = t.timelineSteps;
+
+  // Animation springs for result sections
+  const recipeSpring = useSpring({
+    opacity: result ? 1 : 0,
+    transform: result ? 'translateY(0px)' : 'translateY(20px)',
+    config: config.gentle,
+    delay: result ? 200 : 0,
+  });
+
+  const timelineSpring = useSpring({
+    opacity: result ? 1 : 0,
+    transform: result ? 'translateY(0px)' : 'translateY(20px)',
+    config: config.gentle,
+    delay: result ? 400 : 0, 
+  });
+
+  const guidelinesSpring = useSpring({
+    opacity: result ? 1 : 0,
+    transform: result ? 'translateY(0px)' : 'translateY(20px)',
+    config: config.gentle,
+    delay: result ? 600 : 0,
+  });
   
   const formatDate = (date) => {
     const d = new Date(date);
@@ -482,124 +546,147 @@ function App() {
     const hours = d.getHours().toString().padStart(2, '0');
     const minutes = d.getMinutes().toString().padStart(2, '0');
     return `${day}/${month}/${year} ${hours}:${minutes}`;
-  };
-
+  };  
+  
   const calculateDough = () => {
-    const now = new Date();
-    const bakeTime = new Date(targetTime);
-    const hoursUntilBake = (bakeTime - now) / 1000 / 3600;
+    try {
+      console.log("🍕 Starting calculation...");
+      setIsCalculating(true);
+      
+      console.log("Input values:", {
+        pizzaCount,
+        pizzaSize,
+        hydration,
+        flourType,
+        yeastType,
+        targetTime
+      });
+      
+      const now = new Date();
+      const bakeTime = new Date(targetTime);
+      console.log("Current time:", now.toString());
+      console.log("Bake time:", bakeTime.toString());
+      
+      const hoursUntilBake = (bakeTime - now) / 1000 / 3600;
+      console.log("Hours until bake:", hoursUntilBake);
 
-    const minHoursRequired = {
-      dry: 8,
-      fresh: 12,
-      sourdough: 16,
-    };    
-    const requiredHours = minHoursRequired[yeastType];
-    const earliestValidTime = new Date(now.getTime() + requiredHours * 60 * 60 * 1000 + 600000); // Add 10 minutes (600000 ms)
+      const minHoursRequired = {
+        dry: 8,
+        fresh: 12,
+        sourdough: 16,
+      };    
+      const requiredHours = minHoursRequired[yeastType];
+      const earliestValidTime = new Date(now.getTime() + requiredHours * 60 * 60 * 1000 + 600000); // Add 10 minutes (600000 ms)
 
-    if (hoursUntilBake < requiredHours) {
-      const formattedEarliest = formatDate(earliestValidTime);
-      setWarning(
-        t.warningYeast
-          .replace('{yeastType}', t.yeastTypes[yeastType].toUpperCase())
-          .replace('{hours}', requiredHours)
-          .replace('{earliestTime}', formattedEarliest)
-      );
-      setSuggestedTime(toLocalDatetimeInputValue(earliestValidTime));
-      setResult(null);
-      return;
-    } else {
-      setWarning('');
-      setSuggestedTime(null);
-    }    
-    const doughWeight = pizzaCount * pizzaSize;
-    const hydrationRatio = hydration / 100;
-    const flour = doughWeight / (1 + hydrationRatio);
-    const water = flour * hydrationRatio;
-    
-    // Use flour-specific salt percentage
-    const saltPercentage = flourCharacteristics[flourType].saltPercentage / 100;
-    const salt = flour * saltPercentage;
+      if (hoursUntilBake < requiredHours) {
+        const formattedEarliest = formatDate(earliestValidTime);
+        setWarning(
+          t.warningYeast
+            .replace('{yeastType}', t.yeastTypes[yeastType].toUpperCase())
+            .replace('{hours}', requiredHours)
+            .replace('{earliestTime}', formattedEarliest)
+        );
+        setSuggestedTime(toLocalDatetimeInputValue(earliestValidTime));
+        setResult(null);
+        setIsCalculating(false);
+        return;
+      } else {
+        setWarning('');
+        setSuggestedTime(null);
+      }    
+      const doughWeight = pizzaCount * pizzaSize;
+      const hydrationRatio = hydration / 100;
+      const flour = doughWeight / (1 + hydrationRatio);
+      const water = flour * hydrationRatio;
+      
+      // Use flour-specific salt percentage
+      const saltPercentage = flourCharacteristics[flourType].saltPercentage / 100;
+      const salt = flour * saltPercentage;
 
-    // Adjust yeast based on flour type
-    const yeastMultiplier = flourCharacteristics[flourType].yeastMultiplier;
-    let yeast;
-    if (yeastType === 'dry') {
-      yeast = flour * 0.001 * yeastMultiplier;
-    } else if (yeastType === 'fresh') {
-      yeast = flour * 0.0025 * yeastMultiplier;
-    } else {
-      yeast = flour * 0.20 * yeastMultiplier;
-    }
-
-    const mixTime = now;
-    const restTime = new Date(mixTime.getTime() + 20 * 60 * 1000);
-    const ballTime = new Date(bakeTime.getTime() - 2 * 60 * 60 * 1000);
-    const bulkStart = restTime;
-    const bulkEnd = ballTime;    
-    setResult({
-      flour,
-      water,
-      salt,
-      yeast,
-      yeastType,
-      targetTime,
-      hoursUntilBake,
-      waterPct: hydration,
-      saltPct: (salt / flour) * 100,
-      yeastPct: (yeast / flour) * 100,
-      mixTime,
-      restTime,
-      bulkStart,
-      bulkEnd,
-      ballTime,
-      bakeTime,
-    });
-    
-    // Scroll to recipe section after calculation is successful
-    setTimeout(() => {
-      if (recipeRef.current) {
-        recipeRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Adjust yeast based on flour type
+      const yeastMultiplier = flourCharacteristics[flourType].yeastMultiplier;
+      let yeast;
+      if (yeastType === 'dry') {
+        yeast = flour * 0.001 * yeastMultiplier;
+      } else if (yeastType === 'fresh') {
+        yeast = flour * 0.0025 * yeastMultiplier;
+      } else { // sourdough
+        yeast = flour * 0.20 * yeastMultiplier;
       }
-    }, 100);
-  };
-  const getYeastColor = (type) => {
-    switch (type) {
-      case 'sourdough': return '#8e44ad';
-      case 'fresh': return 'var(--italian-red)';
-      default: return 'var(--italian-green)';
+
+      const mixTime = now;
+      const restTime = new Date(mixTime.getTime() + 20 * 60 * 1000);
+      const ballTime = new Date(bakeTime.getTime() - 2 * 60 * 60 * 1000);
+      const bulkStart = restTime;
+      const bulkEnd = ballTime;      
+      setResult({
+        flour,
+        water,
+        salt,
+        yeast,
+        yeastType,
+        targetTime,
+        hoursUntilBake,
+        waterPct: hydration,
+        saltPct: (salt / flour) * 100,
+        yeastPct: (yeast / flour) * 100,
+        mixTime,
+        restTime,
+        bulkStart,
+        bulkEnd,
+        ballTime,
+        bakeTime,
+      });
+      
+      console.log("Calculation successful, result set:", {flour, water, salt});
+      setIsCalculating(false); // Set loading state to false when done
+      
+      // Scroll to recipe section after calculation is successful
+      setTimeout(() => {
+        if (recipeRef.current) {
+          recipeRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }      }, 100);
+    } catch (error) {
+      console.error("Error in calculateDough:", error);
+      setIsCalculating(false); // Set loading state to false on error
+      alert("An error occurred during calculation. Please check the console for details.");
     }
   };
+  
   return (
-    <div className="container">        <div className="app-header">
-        <div className="title-container">
-          <h1>{t.appTitle}</h1>
-          <p className="header-tagline">{t.tagline}</p>
-        </div>        <div className="language-toggle">
-          <FormControlLabel
-            control={
-              <Switch
-                checked={language === 'tr'}
-                onChange={() => setLanguage(language === 'en' ? 'tr' : 'en')}
-                color="primary"
-                size={isMobile ? "small" : "medium"}
-              />
-            }            label={language === 'en' ? 'Türkçe' : 'English'}
-            sx={{ 
-              margin: '0',
-              '& .MuiFormControlLabel-label': {
-                fontSize: isMobile ? '0.7rem' : '0.9rem',
-                fontWeight: 'bold'
-              },
-              '@media (max-width: 400px)': {
+    <PizzaParallax language={language}>
+      <div className="container">        
+        <div className="app-header">
+          <div className="title-container">
+            <h1>{t.appTitle}</h1>
+            <p className="header-tagline">{t.tagline}</p>
+          </div>        
+          <div className="language-toggle">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={language === 'tr'}
+                  onChange={() => setLanguage(language === 'en' ? 'tr' : 'en')}
+                  color="primary"
+                  size={isMobile ? "small" : "medium"}
+                />
+              }            
+              label={language === 'en' ? 'Türkçe' : 'English'}
+              sx={{ 
+                margin: '0',
                 '& .MuiFormControlLabel-label': {
-                  fontSize: '0.65rem'
+                  fontSize: isMobile ? '0.7rem' : '0.9rem',
+                  fontWeight: 'bold'
+                },
+                '@media (max-width: 400px)': {
+                  '& .MuiFormControlLabel-label': {
+                    fontSize: '0.65rem'
+                  }
                 }
-              }
-            }}
-          />
+              }}
+            />
+          </div>
         </div>
-      </div>
       <div className="input-box">
         <label>{t.pizzaCount}</label>
         <input type="number" value={pizzaCount} onChange={e => setPizzaCount(Number(e.target.value))} />
@@ -639,12 +726,17 @@ function App() {
         <label>{t.targetTime}</label>
         <input type="datetime-local" value={targetTime} onChange={e => setTargetTime(e.target.value)} />
 
-        <button onClick={calculateDough} className="calculate-button">
-          <span className="button-icon">🧮</span>
-          {t.calculateButton}
+        <button onClick={calculateDough} className="calculate-button" disabled={isCalculating}>
+          {isCalculating ? (
+            <span className="loading-spinner">⟳</span>
+          ) : (
+            <span className="button-icon">🧮</span>
+          )}
+          {isCalculating ? t.calculateButton + '...' : t.calculateButton}
         </button>
-
-        {warning && (
+      </div>
+      
+      {warning && (
           <div style={{
             marginTop: '1rem',
             padding: '1rem',
@@ -693,16 +785,12 @@ function App() {
             )}
           </div>
         )}
-      </div>      
+      
       {result && (
         <>          
-          <div className="result-section recipe" ref={recipeRef}>
+          <animated.div style={recipeSpring} className="result-section recipe" ref={recipeRef}>
             <h3>{t.recipeTitle}</h3>
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.5 }}
-            >
+            <div>
               <div className="flour-info">
                 <h4>{flourCharacteristics[flourType].description}</h4>
                 <p><strong>{t.proteinContent}</strong> {flourCharacteristics[flourType].proteinContent}</p>
@@ -723,8 +811,9 @@ function App() {
               <p style={{ marginTop: '1.5rem' }}>
                 <strong>{t.fermentationTime}</strong> ~{result.hoursUntilBake.toFixed(1)} {t.hours}
               </p>
-            </motion.div>
-          </div>            <div className="result-section timeline">
+            </div>
+          </animated.div>
+          <animated.div style={timelineSpring} className="result-section timeline">
             <h3>{t.timelineTitle}</h3>
             <Timeline position={isMobile ? "alternate" : "right"} sx={{
               [`@media (max-width: 400px)`]: {
@@ -776,8 +865,7 @@ function App() {
                     }}
                   >
                     {formatDate(step.time)}
-                  </TimelineOppositeContent>                  <TimelineSeparator>
-                    <TimelineDot color={step.color || 'grey'} sx={{
+                  </TimelineOppositeContent>                  <TimelineSeparator>                    <TimelineDot color={step.color || 'grey'} sx={{
                       backgroundColor: step.dotColor ? step.dotColor : 
                         step.color === 'primary' ? 'var(--italian-green)' :
                         step.color === 'secondary' ? '#777' :
@@ -795,8 +883,17 @@ function App() {
                       {step.icon}
                     </TimelineDot>
                     {idx < 4 && <TimelineConnector />}
-                  </TimelineSeparator><TimelineContent>
-                    <motion.div initial={{ opacity: 0, translateY: 30 }} whileInView={{ opacity: 1, translateY: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>                      <Typography variant="h6" 
+                  </TimelineSeparator>
+                  
+                  <TimelineContent>
+                    <div
+                      style={{
+                        opacity: 1,
+                        transform: 'translateY(0px)',
+                        transition: `all 0.3s ease-out ${(idx * 150) + 450}ms`
+                      }}
+                    >
+                      <Typography variant="h6" 
                         onClick={() => setExpandedStep(expandedStep === idx ? null : idx)}
                         sx={{ 
                           cursor: 'pointer', 
@@ -811,29 +908,29 @@ function App() {
                         <span style={{ fontSize: '0.9rem', marginLeft: '8px' }}>
                           {expandedStep === idx ? '▼' : '▶'}
                         </span>
-                      </Typography>                      {expandedStep === idx ? (
+                      </Typography>
+                      <ExpandableContent isVisible={expandedStep === idx}>
                         <Typography sx={{ 
                           mt: 1, 
                           p: 1.5, 
                           backgroundColor: 'var(--italian-red-light)', 
                           borderLeft: '3px solid var(--italian-red)',
                           borderRadius: '0 4px 4px 0',
-                          transition: 'all 0.3s ease'
                         }} className="instruction-section">
                           {step.desc}
                         </Typography>
-                      ) : (
-                        <Typography sx={{ color: 'text.secondary', fontSize: '0.9rem' }}>
+                      </ExpandableContent>
+                      {expandedStep !== idx && (
+                        <Typography sx={{ color: 'text.secondary', fontSize: '0.9rem', mt: 1 }}>
                           {step.desc.substring(0, 60)}...
                         </Typography>
-                      )}
-                    </motion.div>
+                      )}                    </div>
                   </TimelineContent>
                 </TimelineItem>
               ))}
             </Timeline>
-          </div>          
-          <div className="result-section guidelines">
+          </animated.div>          
+          <animated.div style={guidelinesSpring} className="result-section guidelines">
             <h3 
               onClick={() => setGuidelinesExpanded(!guidelinesExpanded)} 
               style={{ 
@@ -850,7 +947,7 @@ function App() {
               </span>
             </h3>
             
-            {guidelinesExpanded && (
+            <ExpandableContent isVisible={guidelinesExpanded}>
               <>
                 <ul className="avpn-guidelines">
                   {Object.keys(t.guidelinesItems).map(key => (
@@ -871,11 +968,11 @@ function App() {
                   </p>
                 </div>
               </>
-            )}
-          </div>
+            </ExpandableContent>          </animated.div>
         </>
       )}
     </div>
+    </PizzaParallax>
   );
 }
 
