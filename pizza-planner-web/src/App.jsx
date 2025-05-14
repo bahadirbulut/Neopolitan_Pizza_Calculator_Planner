@@ -106,14 +106,13 @@ function App() {
   const [warning, setWarning] = useState('');
   const [suggestedTime, setSuggestedTime] = useState(null);
   const [guidelinesExpanded, setGuidelinesExpanded] = useState(false);
-
   // Define detailed instructions for each timeline step based on AVPN guidelines
   const timelineInstructions = {
     mix: "Mix the ingredients starting with water (room temperature), then dissolve the salt. Gradually add small amounts of flour, mixing continuously, then add yeast. Knead vigorously for 10-15 minutes until the dough is smooth and elastic with no lumps. The finished dough should be soft, smooth, and sticky to the touch.",
     rest: "Allow the dough mass to rest on a work surface covered with a damp cloth, or in a food container for about 20-30 minutes. This initial rest period allows the dough to relax and begin gluten formation, making it easier to portion later.",
     bulk: "For room temperature fermentation, maintain the dough at 22-25°C. For longer fermentation time (over 16 hours), place in refrigerator (4-6°C). The dough must be stored in sealed food containers to prevent surface drying. Rising time varies based on temperature and yeast type following AVPN standards.",
     balling: "Divide the dough into balls (200-280g each depending on desired pizza size) using a spatula or scraper. Minimal handling is required, and the dough should only be shaped by folding the edges from bottom to top. Ball shaping should be completed in a few seconds. Place shaped balls in proofing boxes with a light dusting of flour between them.",
-    bake: "Prepare your oven - traditional wood-fired oven should reach 430-480°C with cooking surface at 380-430°C. Using a pizza peel, stretch the dough disc by hand to 3mm thickness (1-2cm for the crust border). Add toppings and bake for 60-90 seconds, rotating as needed. The pizza should have raised, golden cornicione with charred spots."
+    bake: "TRADITIONAL WOOD-FIRED OVEN: Heat to 430-480°C with cooking surface at 380-430°C. Using a pizza peel, stretch the dough disc by hand to 3mm thickness (1-2cm for the crust border). Add toppings and bake for 60-90 seconds, rotating as needed.\n\nHOME OVEN METHOD: Place a pizza stone or steel on the middle-top rack and preheat at maximum temperature (250-290°C) for at least 45-60 minutes. Stretch dough as above. For best results, use a pizza peel to launch onto the hot stone. Bake for 4-6 minutes until the crust is golden and charred in spots. If your oven has a broiler/grill function, switch to it for the final minute to char the crust."
   };
 
   const formatDate = (date) => {
@@ -400,8 +399,7 @@ function App() {
                         <span style={{ fontSize: '0.9rem', marginLeft: '8px' }}>
                           {expandedStep === idx ? '▼' : '▶'}
                         </span>
-                      </Typography>
-                      {expandedStep === idx ? (
+                      </Typography>                      {expandedStep === idx ? (
                         <Typography sx={{ 
                           mt: 1, 
                           p: 1.5, 
@@ -409,7 +407,7 @@ function App() {
                           borderLeft: '3px solid #e63946',
                           borderRadius: '0 4px 4px 0',
                           transition: 'all 0.3s ease'
-                        }}>
+                        }} className="instruction-section">
                           {step.desc}
                         </Typography>
                       ) : (

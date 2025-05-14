@@ -334,6 +334,18 @@ a:hover {
   font-size: 0.95rem;
 }
 
+.instruction-section {
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+.method-header {
+  font-weight: 700;
+  margin-top: 0.5rem;
+  margin-bottom: 0.3rem;
+  color: #e63946;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .container {
@@ -375,6 +387,16 @@ a:hover {
   /* Fix for date-time picker on iOS */
   input[type="datetime-local"] {
     min-height: 44px;
+  }
+}
+
+@media (max-width: 600px) {
+  Typography.instruction-text {
+    font-size: 0.9rem;
+  }
+  
+  .method-header {
+    font-size: 0.95rem;
   }
 }
 
