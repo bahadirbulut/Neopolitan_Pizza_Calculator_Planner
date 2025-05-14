@@ -570,12 +570,12 @@ function App() {
       default: return 'var(--italian-green)';
     }
   };
-
   return (
-    <div className="container">      
-      <div className="app-header">
-        <h1>{t.appTitle}</h1>
-        <p className="header-tagline">{t.tagline}</p>
+    <div className="container">        <div className="app-header">
+        <div className="title-container">
+          <h1>{t.appTitle}</h1>
+          <p className="header-tagline">{t.tagline}</p>
+        </div>
         <div className="language-toggle">
           <FormControlLabel
             control={
@@ -583,9 +583,18 @@ function App() {
                 checked={language === 'tr'}
                 onChange={() => setLanguage(language === 'en' ? 'tr' : 'en')}
                 color="primary"
+                size={isMobile ? "small" : "medium"}
               />
             }
             label={language === 'en' ? 'Türkçe' : 'English'}
+            sx={{ 
+              '@media (max-width: 600px)': {
+                margin: 0,
+                '& .MuiFormControlLabel-label': {
+                  fontSize: '0.75rem'
+                }
+              }
+            }}
           />
         </div>
       </div>
