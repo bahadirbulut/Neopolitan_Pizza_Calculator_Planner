@@ -575,8 +575,7 @@ function App() {
         <div className="title-container">
           <h1>{t.appTitle}</h1>
           <p className="header-tagline">{t.tagline}</p>
-        </div>
-        <div className="language-toggle">
+        </div>        <div className="language-toggle">
           <FormControlLabel
             control={
               <Switch
@@ -588,11 +587,10 @@ function App() {
             }
             label={language === 'en' ? 'Türkçe' : 'English'}
             sx={{ 
-              '@media (max-width: 600px)': {
-                margin: 0,
-                '& .MuiFormControlLabel-label': {
-                  fontSize: '0.75rem'
-                }
+              margin: '0',
+              '& .MuiFormControlLabel-label': {
+                fontSize: isMobile ? '0.7rem' : '0.9rem',
+                fontWeight: 'bold'
               }
             }}
           />
