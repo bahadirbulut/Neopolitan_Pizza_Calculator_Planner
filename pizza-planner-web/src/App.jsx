@@ -10,7 +10,7 @@ import {
   TimelineDot,
   TimelineOppositeContent
 } from '@mui/lab';
-import { Typography } from '@mui/material';
+import { Typography, useMediaQuery } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import HotelIcon from '@mui/icons-material/Hotel';
 import InventoryIcon from '@mui/icons-material/Inventory';
@@ -23,8 +23,12 @@ function App() {
   const [pizzaSize, setPizzaSize] = useState(250);
   const [hydration, setHydration] = useState(60);
   const [flourType, setFlourType] = useState('00');
-  const [yeastType, setYeastType] = useState('dry');  const yeastFermentationHours = { dry: 8, fresh: 12, sourdough: 16 };
+  const [yeastType, setYeastType] = useState('dry');
+  const yeastFermentationHours = { dry: 8, fresh: 12, sourdough: 16 };
   const recipeRef = useRef(null);
+  
+  // Check if the screen is mobile-sized
+  const isMobile = useMediaQuery('(max-width:600px)');
   
   const toLocalDatetimeInputValue = (date) => {
     const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -244,11 +248,9 @@ function App() {
                 <strong>Fermentation Time:</strong> ~{result.hoursUntilBake.toFixed(1)} hours
               </p>
             </motion.div>
-          </div>
-
-          <div className="result-section timeline">
+          </div>          <div className="result-section timeline">
             <h3>🧭 Example Timeline</h3>
-            <Timeline position="right">
+            <Timeline position={isMobile ? "alternate" : "right"}>
               {[
                 { time: result.mixTime, title: 'Mix', desc: 'Start combining your ingredients.', icon: <AccessTimeIcon />, color: 'primary' },
                 { time: result.restTime, title: 'Rest', desc: 'Let the dough relax 20 min.', icon: <HotelIcon />, color: 'secondary' },
@@ -262,7 +264,17 @@ function App() {
                 { time: result.bakeTime, title: 'Ready to Bake', desc: 'Fire up your oven and enjoy 🍕', icon: <LocalFireDepartmentIcon />, color: 'error' },
               ].map((step, idx) => (
                 <TimelineItem key={idx} sx={{ alignItems: 'center' }}>
-                  <TimelineOppositeContent sx={{ flex: 0.8, textAlign: 'right', pr: 3, fontSize: '0.95rem', color: 'gray', minWidth: '90px', alignSelf: 'center' }}>
+                  <TimelineOppositeContent 
+                    sx={{ 
+                      flex: {xs: 0.3, sm: 0.5, md: 0.8}, 
+                      textAlign: 'right', 
+                      pr: {xs: 1, sm: 2, md: 3}, 
+                      fontSize: {xs: '0.85rem', sm: '0.9rem', md: '0.95rem'}, 
+                      color: 'gray', 
+                      minWidth: {xs: '70px', sm: '80px', md: '90px'}, 
+                      alignSelf: 'center' 
+                    }}
+                  >
                     {formatDate(step.time)}
                   </TimelineOppositeContent>
                   <TimelineSeparator>
